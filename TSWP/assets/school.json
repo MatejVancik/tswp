@@ -1,0 +1,34 @@
+[
+  {
+    "FACULTY": "FEI",
+    "DEPARTMENT": [
+      "Aplikovaná informatika",
+      "Automobilová elektronika",
+      "Elektroenergetika",
+      "Elektronika",
+      "Fyzikálne inžinierstvo moderných materiálov",
+      "Informatika",
+      "Inteligentné systémy",
+      "Hospodárska informatika",
+      "Kybernetika",
+      "Riadenie elektromechanických systémov",
+      "Telekomunikácie",
+      "Počítačové modelovanie",
+      "Priemyselná elektrotechnika",
+      "Elektrotechnické inžinierstvo",
+      "Infoelektronika",
+      "Kybernetika a informačno-riadiace systémy",
+      "Multimediálne telekomunikácie",
+      "Umelá inteligencia",
+      "Priemyselná elektrotechnika",
+      "Progresívne materiály a technológie v automobilovej elektronike"
+    ]
+  },
+  {
+    "FACULTY": "BAŇA",
+    "DEPARTMENT": [
+      "Okopavanie bandurkoch",
+      "Bagrovanie kanalov"
+    ]
+  }
+]

@@ -1,5 +1,7 @@
 package com.mv2studio.tswp.core;
 
+import com.mv2studio.tswp.R;
+import com.mv2studio.tswp.model.TClass;
 import com.mv2studio.tswp.ui.MainActivity;
 
 import android.app.NotificationManager;
@@ -11,10 +13,13 @@ import android.support.v4.app.TaskStackBuilder;
 
 public class Notification {
 	
-	public Notification(Context context, String contentTitle, String contentText) {
+	public Notification(Context context, TClass cl) {
+		String contentTitle = cl.getName();
+		String contentText =  cl.getRoom();
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
 											 .setContentTitle(contentTitle)
-											 .setContentText(contentText);
+											 .setContentText(contentText)
+											 .setSmallIcon(R.drawable.ic_launcher);
 		
 		// Creates an explicit intent for an Activity in your app
 		Intent resultIntent = new Intent(context, MainActivity.class);

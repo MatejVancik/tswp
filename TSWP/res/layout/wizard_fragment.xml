@@ -9,34 +9,42 @@
         android:layout_height="match_parent"
         android:orientation="vertical" >
 
-        <ImageButton
+        <Button
             android:id="@+id/wizard_fragment_student_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="@drawable/imagebutton_selector"
+            android:text="TEXT1"
+            android:textColor="@color/HoloBlue"
+            android:textSize="50sp" />
 
-        <ImageButton
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_weight="0"
+            android:background="@color/HoloBlue" />
+
+        <Button
             android:id="@+id/wizard_fragment_teacher_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:background="@drawable/imagebutton_selector"
+            android:text="TEXT2"
+            android:textColor="@color/HoloBlue"
+            android:textSize="50sp" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/wizard_fragment_student_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone" >
+        android:orientation="vertical" 
+        android:visibility="gone">
 
         <Spinner
             android:id="@+id/wizard_fragment_student_faculty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0" />
-
-        <Spinner
-            android:id="@+id/wizard_fragment_student_year"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0" />
@@ -47,19 +55,43 @@
             android:layout_height="wrap_content"
             android:layout_weight="0" />
 
-        <ImageButton
+        <Spinner
+            android:id="@+id/wizard_fragment_student_year"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:entries="@array/years" />
+
+        <Button
             android:id="@+id/wizard_fragment_student_mais"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0" />
+            android:layout_weight="0"
+            android:background="@drawable/button_selector_orange"
+            android:text="LOAD"
+            android:textColor="#fff" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/black_highg_tr" />
 
         <Button
             android:id="@+id/wizard_fragment_student_next"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_weight="1"
-            android:text="NEXT" />
+            android:layout_weight="0"
+            android:background="@drawable/button_selector_green"
+            android:text="NEXT"
+            android:textColor="#fff" />
     </LinearLayout>
 
     <LinearLayout
@@ -71,37 +103,37 @@
 
         <EditText
             android:id="@+id/wizard_fragment_teacher_email"
-            android:layout_weight="0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:text="Email" />
 
         <EditText
             android:id="@+id/wizard_fragment_teacher_password"
-            android:layout_weight="0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:password="true"
             android:text="Heslo" />
-        
-        <TextView 
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="Ak ešte nie ste registrovaný, zadajte Vaše meno a priezvisko"/>
-        
+            android:text="Ak ešte nie ste registrovaný, zadajte Vaše meno a priezvisko" />
+
         <EditText
             android:id="@+id/wizard_fragment_teacher_name"
-            android:layout_weight="0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:text="Meno" />
 
         <EditText
             android:id="@+id/wizard_fragment_teacher_surname"
-            android:layout_weight="0"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="0"
             android:text="Priezvisko" />
 
         <Button

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <drawable name="tr_black">#80000000</drawable>
+    <drawable name="black_ul_low_tr">#dd000000</drawable>
+    <drawable name="black_low_tr">#cc000000</drawable>
+    <drawable name="black_normal_tr">#aa000000</drawable>
+    <drawable name="black_highg_tr">#77000000</drawable>
+    <drawable name="white_low_tr">#ccffffff</drawable>
+    <drawable name="white_normal_tr">#aaffffff</drawable>
+    <drawable name="white_high_tr">#77ffffff</drawable>
+    <drawable name="white_ex_tr">#11ffffff</drawable>
+    <drawable name="transparent">#00000000</drawable>
+    
+    <drawable name="HoloBlue">#33B5E5</drawable>
+    <drawable name="HoloBlueDark">#0099CC</drawable>
+    <drawable name="HoloGreen">#99CC00</drawable>
+    <drawable name="HoloGreenDark">#669900</drawable>
+    <drawable name="HoloOragne">#FB3</drawable>
+    <drawable name="HoloOragneDark">#F80</drawable>
+    
+    <color name="HoloBlue">#33B5E5</color>
+    <color name="HoloBlueDark">#0099CC</color>
+    <color name="HoloGreen">#99CC00</color>
+    <color name="HoloGreenDark">#669900</color>
+    <color name="HoloOragne">#FB3</color>
+    <color name="HoloOragneDark">#F80</color>
+    
+</resources>

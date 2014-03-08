@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string-array name="deps">
+        <item>Aplikovaná informatika</item>
+        <item>Automobilová elektronika</item>
+        <item>Elektroenergetika</item>
+        <item>Informatika</item>
+    </string-array>
+
+    <integer-array name="yearsVal">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </integer-array>
+    
+    <string-array name="years">
+        <item>Bc. 1. ročník</item>
+        <item>Bc. 2. ročník</item>
+        <item>Bc. 3. ročník</item>
+        <item>Ing. 1. ročník</item>
+        <item>Ing. 2. ročník</item>
+    </string-array>
+    
+</resources>

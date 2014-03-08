@@ -1,43 +1,63 @@
 package com.mv2studio.tswp.ui;
 
-import android.app.Fragment;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.mv2studio.tswp.R;
+import com.mv2studio.tswp.ui.MainActivity.OnBackPressedListener;
 
-public class WizardFragment extends Fragment {
+public class WizardFragment extends BaseFragment {
 	
-	private ImageButton mainStudent, mainTeacher, studentMais;
+	private Button mainStudent, mainTeacher, studentMais;
 	private Button studentNext, teacherNext;
 	private Spinner faculty, year, dep;
 	private EditText email, pass, name, surname;
 	private LinearLayout mainLayout, studentLayout, teacherLayout;
 	private Context context;
 	private boolean isTeacher, maisLogged;
+	private int step = 0;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		context = getActivity();
 		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		final Editor editor = prefs.edit();
+		
 		FrameLayout l = (FrameLayout)inflater.inflate(R.layout.wizard_fragment, null);
 		
-		mainStudent = (ImageButton) l.findViewById(R.id.wizard_fragment_student_button);
-		mainTeacher = (ImageButton) l.findViewById(R.id.wizard_fragment_teacher_button);
-		studentMais = (ImageButton) l.findViewById(R.id.wizard_fragment_student_mais);
+		mainStudent = (Button) l.findViewById(R.id.wizard_fragment_student_button);
+		mainTeacher = (Button) l.findViewById(R.id.wizard_fragment_teacher_button);
+		studentMais = (Button) l.findViewById(R.id.wizard_fragment_student_mais);
 		studentNext = (Button) l.findViewById(R.id.wizard_fragment_student_next);
 		teacherNext = (Button) l.findViewById(R.id.wizard_fragment_teacher_next);
 		faculty = (Spinner) l.findViewById(R.id.wizard_fragment_student_faculty);
@@ -51,25 +71,75 @@ public class WizardFragment extends Fragment {
 		studentLayout = (LinearLayout) l.findViewById(R.id.wizard_fragment_student_layout);
 		teacherLayout = (LinearLayout) l.findViewById(R.id.wizard_fragment_teacher_reg_layout);
 		
+		
+		
+		// SPINERS
+		final ArrayList<Faculty> deps = getDepartments();
+		
+		List<String> list = new ArrayList<String>();
+		for(Faculty dep: deps) list.add(dep.faculty);
+         
+		// departments
+		final ArrayAdapter<String> departmentsAdapter = new ArrayAdapter<String>
+								(context, android.R.layout.simple_spinner_item, new ArrayList<String>());
+		departmentsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		dep.setAdapter(departmentsAdapter);
+		
+		// faculties
+        ArrayAdapter<String> facultyAdapter = new ArrayAdapter<String>
+        								   (context, android.R.layout.simple_spinner_item,list);
+        facultyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        faculty.setAdapter(facultyAdapter);
+        faculty.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				List<String> items = new ArrayList<String>();
+				for(Faculty fac: deps) if(fac.faculty.equals(faculty.getSelectedItem())) items = fac.dep;
+				departmentsAdapter.clear();
+				departmentsAdapter.addAll(items);
+				departmentsAdapter.notifyDataSetChanged();
+			}
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				departmentsAdapter.clear();
+				departmentsAdapter.notifyDataSetChanged();
+			}
+		});
+        
+        
+        
+        
+        
+		
 		// WIZARD BUTTONS
 		OnClickListener buttonsListener = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				String text = null;
+				
 				switch(v.getId()) {
 				case R.id.wizard_fragment_student_button:
+					step++;
 					isTeacher = false;
-					switchView(mainLayout, mainStudent);
+					switchView(mainLayout, studentLayout);
 					break;
 				case R.id.wizard_fragment_teacher_button:
+					step++;
 					isTeacher = true;
 					switchView(mainLayout, teacherLayout);
 					break;
 				case R.id.wizard_fragment_student_mais:
 				case R.id.wizard_fragment_student_next:
 					if(maisLogged) {
-						
+						Toast.makeText(context, "Welcome to TSWP", Toast.LENGTH_SHORT).show();
+						editor.putBoolean(MainActivity.P_LOGGED_KEY, true);
+						editor.putString(MainActivity.P_USER_TYPE_KEY, MainActivity.P_STUDENT_KEY);
+						editor.apply();
+						Intent i = new Intent(context, MainActivity.class);
+						i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+						startActivity(i);
 					} else {
-						Toast.makeText(context, "Prosím, najprv si stiahnite rozvrh z MAISu", Toast.LENGTH_LONG).show();
+						text = "Prosím, najprv si stiahnite rozvrh z MAISu";
 					}
 					break;
 				case R.id.wizard_fragment_teacher_next:
@@ -80,26 +150,33 @@ public class WizardFragment extends Fragment {
 					
 					// EMAIL & PASS IS A MUST
 					if(emailText.isEmpty() || passText.isEmpty()) {
-						Toast.makeText(context, "Musíte zadať email aj heslo.", Toast.LENGTH_LONG).show();
+						text = "Musíte zadať email aj heslo.";
 						
 					// ERROR. ONLY TUKE TEACHER
 					} else if (!emailText.endsWith("@tuke.sk")) {
-						Toast.makeText(context, "Dostupné len pre emaily končiace '@tuke.sk'", Toast.LENGTH_LONG).show();
+						text = "Dostupné len pre emaily končiace '@tuke.sk'";
 						
 					// LOGIN OK
 					} else if(nameText.isEmpty() && surNameText.isEmpty()) {
+						// TODO: GET RESPONSE FROM SERVER
 						
+						editor.putBoolean(MainActivity.P_LOGGED_KEY, true);
+						editor.putString(MainActivity.P_USER_TYPE_KEY, MainActivity.P_TEACHER_KEY);
+						editor.apply();
 						
 					// ERROR. ENTER BOTH OR NONE
 					} else if (nameText.isEmpty() || surNameText.isEmpty()) {
-						Toast.makeText(context, "Zadajte meno aj priezvisko, alebo ani jeden údaj", Toast.LENGTH_LONG).show();
+						text = "Zadajte meno aj priezvisko, alebo ani jeden údaj";
 						
 					// REGISTRATION
 					} else {
+						// TODO: SEND REQUEST FOR REGISTRATION TO SERVER.
 						
+						text = "Prosím, potvrdte email.";
 					}
 					break;
 				}
+				if(text != null) Toast.makeText(context, text, Toast.LENGTH_LONG).show();
 			}
 		};
 		mainStudent.setOnClickListener(buttonsListener);
@@ -107,22 +184,85 @@ public class WizardFragment extends Fragment {
 		studentMais.setOnClickListener(buttonsListener);
 		studentNext.setOnClickListener(buttonsListener);
 		teacherNext.setOnClickListener(buttonsListener);
+		mainStudent.setTypeface(tThin);
+		mainTeacher.setTypeface(tThin);
 		
+		
+		((MainActivity)context).setOnBackPressedListener(new OnBackPressedListener() {
+			@Override
+			public void doBack() {
+				if(step == 1) {
+					step--;
+					switchView(isTeacher ? teacherLayout : studentLayout, mainLayout);
+				} else {
+					((MainActivity)context).finish();
+				}
+			}
+		});
 		
 		return l;
+	}
+	
+	public class Faculty {
+		public String faculty;
+		public List<String> dep;
 	}
 	
 	
 	private void switchView(View oldView, View newView) {
 		final Animation anim_out = AnimationUtils.loadAnimation(context, android.R.anim.fade_out); 
 	    final Animation anim_in  = AnimationUtils.loadAnimation(context, android.R.anim.fade_in); 
-
+	    anim_out.setDuration(100);
+	    anim_in.setDuration(300);
+	    
 	    oldView.setVisibility(View.GONE);
 	    oldView.startAnimation(anim_out);
 	    newView.setVisibility(View.VISIBLE);
 	    newView.startAnimation(anim_in);
 	}
 	
+	private ArrayList<Faculty> getDepartments(){
+		ArrayList<Faculty> deps = new ArrayList<WizardFragment.Faculty>();
+		
+		try {
+			JSONArray obj = new JSONArray(getJsonFromAssets("school.json"));
+			for(int i = 0; i < obj.length(); i++) {
+				JSONObject dep = obj.getJSONObject(i);
+				Faculty department = new Faculty();
+				department.faculty = dep.getString("FACULTY");
+				
+				// LOAD BC
+				List<String> list = new ArrayList<String>();
+				JSONArray array = dep.getJSONArray("DEPARTMENT");
+				for(int j = 0; j < array.length(); j++) {
+					list.add(array.getString(j));
+				}
+				department.dep = list;
+				
+				
+				
+				deps.add(department);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return deps;
+	}
 	
+	private String getJsonFromAssets(String path) {
+		String jsonString = null;
+	    AssetManager am = getActivity().getAssets();
+	    try {
+	        InputStream is = am.open(path);
+	        int length = is.available();
+	        byte[] data = new byte[length];
+	        is.read(data);
+	        jsonString = new String(data);
+	    } catch (IOException e1) {
+//	        e1.printStackTrace();
+	    }
+
+	    return jsonString;
+	}
 	
 }

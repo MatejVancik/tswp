@@ -8,20 +8,21 @@
         android:minSdkVersion="15"
         android:targetSdkVersion="19" />
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        
-        <receiver android:name="com.mv2studio.tswp.core.Autostart">
+        <receiver android:name="com.mv2studio.tswp.core.Autostart" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        
+
         <activity
-            android:name="com.mv2studio.tswp.ui.LoginActivity"
+            android:name="com.mv2studio.tswp.ui.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,13 +30,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity 
-            android:name="com.mv2studio.tswp.ui.MainActivity"
-            android:label="@string/app_name" />
-        
+
         <service android:name="com.mv2studio.tswp.core.NotificationService" />
+
+        <receiver android:name="com.mv2studio.tswp.core.AlarmManagerBroadcastReceiver" >
+            <intent-filter >
+                <action android:name="com.mv2studio.tswp.alarm"/>
+            </intent-filter>
+        </receiver>
     </application>
-    
 
 </manifest>
