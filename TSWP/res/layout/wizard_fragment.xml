@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    
     android:layout_height="match_parent" >
 
     <LinearLayout
         android:id="@+id/wizard_fragment_welcome"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:splitMotionEvents="false"
         android:orientation="vertical" >
 
         <Button
@@ -15,13 +17,35 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/imagebutton_selector"
-            android:text="TEXT1"
+            android:text="SOM ŠTUDENT"
             android:textColor="@color/HoloBlue"
             android:textSize="50sp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="0"
+            android:background="@color/HoloBlue" />
+
+        <TextView
+            android:id="@+id/wizard_fragment_welcome_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0"
+            android:gravity="center_horizontal"
+            android:text="VYBERTE NIEKTORÚ MOŽNOSŤ."
+            android:textColor="@color/HoloBlueDark"
+            android:textSize="20sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_weight="0"
             android:background="@color/HoloBlue" />
 
@@ -31,7 +55,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/imagebutton_selector"
-            android:text="TEXT2"
+            android:text="SOM UČITEĽ"
             android:textColor="@color/HoloBlue"
             android:textSize="50sp" />
     </LinearLayout>
@@ -40,48 +64,219 @@
         android:id="@+id/wizard_fragment_student_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" 
-        android:visibility="gone">
+        android:orientation="vertical"
+        android:visibility="gone" >
 
-        <Spinner
-            android:id="@+id/wizard_fragment_student_faculty"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0" />
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="10dp" >
 
-        <Spinner
-            android:id="@+id/wizard_fragment_student_dep"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp" >
 
-        <Spinner
-            android:id="@+id/wizard_fragment_student_year"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:entries="@array/years" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:orientation="horizontal" >
 
-        <Button
-            android:id="@+id/wizard_fragment_student_mais"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:background="@drawable/button_selector_orange"
-            android:text="LOAD"
-            android:textColor="#fff" />
+                    <RelativeLayout
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="10dp"
+                        android:layout_weight="0"
+                        android:background="@drawable/circle"
+                        android:gravity="center_vertical" >
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+                        <TextView
+                            android:id="@+id/wizard_fragment_student_layout_num"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_marginLeft="2dp"
+                            android:text="1"
+                            android:textColor="#fff"
+                            android:textSize="30sp" />
+                    </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/black_highg_tr" />
+                    <TextView
+                        android:id="@+id/wizard_fragment_student_layout_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="Vyberte svoju fakultu a ročník"
+                        android:textColor="@color/HoloBlueDark"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0"
+                    android:background="@color/HoloBlue" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="0" >
+
+                    <Spinner
+                        android:id="@+id/wizard_fragment_student_faculty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="15dp" />
+
+                    <Spinner
+                        android:id="@+id/wizard_fragment_student_year"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@+id/wizard_fragment_student_faculty"
+                        android:entries="@array/years"
+                        android:padding="15dp" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:orientation="horizontal" >
+
+                    <RelativeLayout
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="10dp"
+                        android:layout_weight="0"
+                        android:background="@drawable/circle"
+                        android:gravity="center_vertical" >
+
+                        <TextView
+                            android:id="@+id/wizard_fragment_student_layout_num2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_marginLeft="2dp"
+                            android:text="2"
+                            android:textColor="#fff"
+                            android:textSize="30sp" />
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/wizard_fragment_student_layout_title2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="0"
+                        android:gravity="center_vertical"
+                        android:text="Vyberte svoj odbor"
+                        android:textColor="@color/HoloBlueDark"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0"
+                    android:background="@color/HoloBlue" />
+
+                <Spinner
+                    android:id="@+id/wizard_fragment_student_dep"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="0"
+                    android:padding="15dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal" >
+
+                    <RelativeLayout
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="10dp"
+                        android:layout_weight="0"
+                        android:background="@drawable/circle"
+                        android:gravity="center_vertical" >
+
+                        <TextView
+                            android:id="@+id/wizard_fragment_student_layout_num3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_marginLeft="2dp"
+                            android:text="3"
+                            android:textColor="#fff"
+                            android:textSize="30sp" />
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/wizard_fragment_student_layout_title3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="0"
+                        android:gravity="center_vertical"
+                        android:text="PRIHLÁSTE SA DO MAISU"
+                        android:textColor="@color/HoloBlueDark"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0"
+                    android:background="@color/HoloBlue" />
+
+                <Button
+                    android:id="@+id/wizard_fragment_student_mais"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="0"
+                    android:background="@drawable/button_selector_orange"
+                    android:paddingLeft="40dp"
+                    android:paddingRight="40dp"
+                    android:text="PRIHLÁSIŤ"
+                    android:textColor="#fff" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+        </ScrollView>
 
         <Button
             android:id="@+id/wizard_fragment_student_next"
@@ -90,7 +285,7 @@
             android:layout_gravity="bottom"
             android:layout_weight="0"
             android:background="@drawable/button_selector_green"
-            android:text="NEXT"
+            android:text="ĎALEJ"
             android:textColor="#fff" />
     </LinearLayout>
 
@@ -101,48 +296,111 @@
         android:orientation="vertical"
         android:visibility="gone" >
 
-        <EditText
-            android:id="@+id/wizard_fragment_teacher_email"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="Email" />
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" >
 
-        <EditText
-            android:id="@+id/wizard_fragment_teacher_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:password="true"
-            android:text="Heslo" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="Ak ešte nie ste registrovaný, zadajte Vaše meno a priezvisko" />
+                <TextView
+                    android:id="@+id/wizard_fragment_teacher_layout_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="0"
+                    android:gravity="center_vertical"
+                    android:text="Zadajte svoj email a heslo"
+                    android:textColor="@color/HoloBlueDark"
+                    android:textSize="20sp" />
 
-        <EditText
-            android:id="@+id/wizard_fragment_teacher_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="Meno" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="0"
+                    android:background="@color/HoloBlue" />
 
-        <EditText
-            android:id="@+id/wizard_fragment_teacher_surname"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:text="Priezvisko" />
+                <EditText
+                    android:id="@+id/wizard_fragment_teacher_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0"
+                    android:hint="Email" />
+
+                <EditText
+                    android:id="@+id/wizard_fragment_teacher_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0"
+                    android:hint="Heslo"
+                    android:password="true" />
+
+                <TextView
+                    android:id="@+id/wizard_fragment_teacher_layout_title2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="40dp"
+                    android:layout_weight="0"
+                    android:gravity="center_vertical"
+                    android:text="Ak ešte nie ste registrovaný, zadajte Vaše meno a priezvisko"
+                    android:textColor="@color/HoloBlueDark"
+                    android:textSize="20sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="0"
+                    android:background="@color/HoloBlue" />
+
+                <EditText
+                    android:id="@+id/wizard_fragment_teacher_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0"
+                    android:hint="Meno" />
+
+                <EditText
+                    android:id="@+id/wizard_fragment_teacher_surname"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0"
+                    android:hint="Priezvisko" />
+            </LinearLayout>
+        </ScrollView>
 
         <Button
             android:id="@+id/wizard_fragment_teacher_next"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_weight="1"
-            android:text="NEXT" />
+            android:layout_weight="0"
+            android:background="@drawable/button_selector_green"
+            android:text="ĎALEJ"
+            android:textColor="#fff" />
     </LinearLayout>
 
 </FrameLayout>

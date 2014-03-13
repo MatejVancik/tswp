@@ -25,10 +25,135 @@
     ]
   },
   {
-    "FACULTY": "BAŇA",
+    "FACULTY": "FBERG",
     "DEPARTMENT": [
-      "Okopavanie bandurkoch",
-      "Bagrovanie kanalov"
+      "Automatizácia a riadenie procesov získavania a spracovania surovín",
+      "Baníctvo a geotechnika",
+      "Dopravná logistika podniku",
+      "Geodézia a geografické informačné systémy",
+      "Geodézia a kataster nehnuteľností",
+      "Geológia a regionálny rozvoj",
+      "Geoprieskum",
+      "Geoturizmus",
+      "Hospodárenie s vodou v komunálnej sfére",
+      "Informatizácia procesov získavania a spracovania surovín",
+      "Manažérstvo procesov",
+      "Manažérstvo zemských zdrojov",
+      "Mineralurgia a environmentálne technológie",
+      "Ochrana životného prostredia a ekotechnológie surovín",
+      "Priemyselná logistika",
+      "Riadenie dopravy surovín",
+      "Riadenie kvality procesov získavania a spracovania surovín",
+      "Technológie v naftárenskom a plynárenskom priemysle",
+      "Využívanie alternatívnych zdrojov energie",
+      "Záchranárska, požiarna a bezpečnostná technika",
+      "Geologické inžinierstvo",
+      "Inžinierska geodézia a kataster nehnuteľností",
+      "Riadenie procesov získavania a spracovania surovín",
+      "Technológie baníctva a tunelárstva"
+    ]
+  },
+  {
+    "FACULTY": "HF",
+    "DEPARTMENT": [
+      "Hutníctvo",
+      "Kovové a nekovové materiály",
+      "Tepelná energetika a plynárenstvo",
+      "Priemyselná keramika",
+      "Integrované systémy riadenia",
+      "Spracovanie a recyklácia odpadov",
+      "Materiály pre automobilový priemysel",
+      "Biometalurgia",
+      "Materiálové a technologické aplikácie pre výtvarnú tvorbu",
+      "Environmentálna chémia",
+      "Hutníctvo železa a ocele",
+      "Zlievarenstvo",
+      "Materiálové inžinierstvo",
+      "Tvárnenie kovov",
+      "Environmentálny analýza"
+    ]
+  },
+  {
+    "FACULTY": "SjF",
+    "DEPARTMENT": [
+      "Automobilová výroba",
+      "Bezpečnosť a ochrana zdravia pri práci",
+      "Environmentálne manažérstvo",
+      "Kvalita produkcie",
+      "Počítačová podpora strojárskej výroby",
+      "Priemyselné inžinierstvo",
+      "Protetika a ortotika",
+      "Technika ochrany životného prostredia",
+      "Riadenie a diagnostika výrobnej,  robotickej  a dopravnej techniky",
+      "Mechatronika",
+      "Všeobecné strojárstvo",
+      "Strojné inžinierstvo",
+      "Manažment technických a  environmentálnych rizík v strojárstve",
+      "Technológie, manažment a inovácie strojárskej  výroby",
+      "Aplikovaná mechanika",
+      "Automatizácia a riadenie strojov a  procesov",
+      "Bezpečnosť technických systémov",
+      "Biomedicínske inžinierstvo",
+      "Dopravná technika a logistika",
+      "Energetické stroje a zariadenia",
+      "Inžinierstvo kvality produkcie",
+      "Robotická technika",
+      "Strojárske technológie",
+      "Stroje a zariadenia pre stavebníctvo,  poľnohospodárstvo a úpravníctvo",
+      "Výrobné stroje a zariadenia"
+    ]
+  },
+  {
+    "FACULTY": "SVF",
+    "DEPARTMENT": [
+      "Pozemné stavby – budovy a prostredie",
+      "Inžinierske konštrukcie a dopravné stavby",
+      "Technológia a manažment v stavebníctve",
+      "Environmentálne inžinierstvo stavieb",
+      "Tvorba budov a prostredia",
+      "Nosné konštrukcie a dopravné stavby",
+      "Stavby s environmentálnym určením"
+    ]
+  },
+  {
+    "FACULTY": "EkF",
+    "DEPARTMENT": [
+      "Financie, bankovníctvo a investovanie",
+      "Verejná správa a regionálny rozvoj"
+    ]
+  },
+  {
+    "FACULTY": "FVT",
+    "DEPARTMENT": [
+      "Výrobné technológie",
+      "Počítačová podpora výrobných technológií",
+      "Manažment výroby",
+      "Prevádzka priemyselných technológií",
+      "Monitoring a diagnostika technických zariadení",
+      "Navrhovanie technických zariadení",
+      "Procesná technika",
+      "Riadenie výroby"
+    ]
+  },
+  {
+    "FACULTY": "FU",
+    "DEPARTMENT": [
+      "Architektúra a urbanizmus",
+      "Dizajn",
+      "Voľné výtvarné umenie"
+    ]
+  },
+  {
+    "FACULTY": "LF",
+    "DEPARTMENT": [
+      "Riadenie leteckej dopravy",
+      "Profesionálny pilot",
+      "Riadenie letovej prevádzky",
+      "Prevádzka letísk",
+      "Prevádzka lietadiel",
+      "Avionické systémy",
+      "Senzorika",
+      "Senzorika a avionické systémy"
     ]
   }
 ]
