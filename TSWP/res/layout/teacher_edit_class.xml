@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/class_edit_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:paddingBottom="3dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="15dp"
+        android:text="Editovať event"
+        android:textStyle="bold"
+        android:textColor="@color/HoloBlue"
+        android:textSize="25sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_weight="0"
+        android:background="@color/HoloBlue" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        android:padding="10dp" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/class_edit_name"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:singleLine="true"
+                android:hint="názov udalosti" />
+
+            <EditText
+                android:id="@+id/class_edit_desc"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:singleLine="true"
+                android:hint="popis udalosti" />
+
+            <TextView
+                android:id="@+id/class_edit_start_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Začiatok:"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginBottom="5dp"
+                android:background="@color/gray_shadow" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/class_edit_start_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/imagebutton_selector"
+                    android:text="Start time" />
+
+                <Button
+                    android:id="@+id/class_edit_start_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/imagebutton_selector"
+                    android:text="Start date" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/class_edit_end_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Koniec:"
+                 android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginBottom="5dp"
+                android:background="@color/gray_shadow" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/class_edit_end_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/imagebutton_selector"
+                    android:text="end time" />
+
+                <Button
+                    android:id="@+id/class_edit_end_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/imagebutton_selector"
+                    android:text="end date" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/class_edit_attach"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Prílohy:"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginBottom="5dp"
+                android:background="@color/gray_shadow" />
+
+            <Button
+                android:id="@+id/class_edit_choose_file"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/imagebutton_selector"
+                android:text="Pridať súbor" />
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_weight="0"
+        android:background="@color/gray_shadow" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_weight="0"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/class_edit_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/cancel_button_selector"
+            android:text="Zrušiť" />
+
+        <View
+            android:layout_width="1px"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0"
+            android:background="@color/gray_shadow" />
+
+        <Button
+            android:id="@+id/class_edit_ok"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/ok_button_selector"
+            android:text="OK" />
+    </LinearLayout>
+
+</LinearLayout>

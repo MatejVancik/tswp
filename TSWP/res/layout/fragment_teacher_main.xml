@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <ListView 
+        android:id="@+id/fragment_teacher_main_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:clipToPadding="false" />
+    
+    <Button
+        android:id="@+id/fragment_teacher_main_add_button" 
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_weight="0"
+        android:background="@drawable/button_selector_green"
+        android:text="Pridať prednášku"
+        android:textColor="#fff"/>
+    
+
+</LinearLayout>

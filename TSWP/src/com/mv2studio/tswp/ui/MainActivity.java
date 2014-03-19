@@ -1,16 +1,20 @@
 package com.mv2studio.tswp.ui;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
+import android.view.View;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.mv2studio.tswp.R;
+import com.mv2studio.tswp.core.MaisCalendarParser;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 	
 	protected Typeface tLight, tCond, tCondBold, tCondLight, tThin;
 	protected OnBackPressedListener onBackPressedListener;
@@ -29,44 +33,28 @@ public class MainActivity extends Activity {
 		tLight = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
 		tCond = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Condensed.ttf");
 		tCondBold = Typeface.createFromAsset(getAssets(), "fonts/Roboto-BoldCondensed.ttf");
-//		MaisCalendarParser.readAsset(this);
-		
-//		
-//		// test DB
-//		Db db = new Db(this);
-//		for(int i = 1; i < 10; i++) {
-//			Calendar c = Calendar.getInstance();
-//			c.add(Calendar.MINUTE, i);
-//			Date start = c.getTime();
-//			c.add(Calendar.MINUTE, i*10);
-//			Date end = c.getTime();
-//			
-//			TClass t = new TClass("name"+i, "room"+i, start, end, true);
-//			db.insertItem(t);
-//		}
-//		Intent ii = new Intent(this, NotificationService.class);
-//		startService(ii);
+//		MaisCalendarParser.parseCalendar(this);
+
 		// load prefs
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean isLogged = prefs.getBoolean(P_LOGGED_KEY, false);
-		boolean isTeacher = prefs.getBoolean(P_USER_TYPE_KEY, false);
+		boolean isLogged = true; //Prefs.getBoolValue(P_LOGGED_KEY, this);
+		boolean isTeacher = false; //Prefs.getBoolValue(P_USER_TYPE_KEY, this);
 		
 		int contentView = R.id.activity_main_content_view;
 		
 		// choose the right fragment
-		Fragment fragment;
 		if(isLogged) {
 			if(isTeacher) {
-				fragment = new TeacherMainFragment();
+				getSupportFragmentManager().beginTransaction().replace(contentView, new TeacherMainFragment()).commit();
 			} else {
-				fragment = new StudentMainFragment();
+				findViewById(R.id.activity_main_student_layout).setVisibility(View.VISIBLE);
+				ViewPager pager = (ViewPager) findViewById(R.id.student_pager);
+				pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
+				PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.student_tabs);
+				tabs.setViewPager(pager);
 			}
-			
 		} else {
-			fragment = new WizardFragment();
+			getSupportFragmentManager().beginTransaction().replace(contentView, new WizardFragment()).commit();
 		}
-		
-		getFragmentManager().beginTransaction().replace(contentView, fragment).commit();
 		
 	}
 
@@ -95,6 +83,44 @@ public class MainActivity extends Activity {
 		} else {
 			super.onBackPressed();
 		}	
+	}
+	
+	private class PagerAdapter extends FragmentStatePagerAdapter {
+
+		public PagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
+		
+		@Override
+		public Fragment getItem(int arg0) {
+			
+			switch(arg0) {
+			case 0:
+				return new StudentScheduleFragment();
+			case 1:
+				return new StudentEventFragment();
+			}
+			
+			return null;
+		}
+		
+		@Override
+		public int getCount() {
+			return 2;
+		}
+		
+		@Override
+		public CharSequence getPageTitle(int position) {
+			switch(position) {
+			case 0:
+				return "rozvrh";
+			case 1:
+				return "prednasky";
+			default: return "";
+			}
+			
+		}
+		
 	}
 
 }

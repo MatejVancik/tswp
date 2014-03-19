@@ -8,39 +8,45 @@ public class TClass implements Serializable {
 
 	private static final long serialVersionUID = -8639004259345142397L;
 	private int id;
+	private State state = State.NUL;
 	private String name, room;
 	private Date start, end;
-	private boolean notify, repeatWeekly;
+	private boolean notify, repeatWeekly, excercise, newDay;
 
-	
-	public TClass(int id, String name, String room, Date start, Date end, boolean notify) {
-		this(name, room, start,end, notify);
+	public enum State {
+		NUL, NEXT, RUN
+	}
+
+	public TClass(int id, String name, String room, Date start, Date end, boolean newDay, boolean isExercise, boolean notify) {
+		this(name, room, start, end, isExercise, notify);
+		this.newDay = newDay;
 		this.id = id;
 	}
-	
-	public TClass(String name, String room, Date start, Date end, boolean notify) {
+
+	public TClass(String name, String room, Date start, Date end, boolean isExercise, boolean notify) {
 		this.name = name;
 		this.room = room;
 		this.start = start;
 		this.end = end;
 		this.notify = notify;
-		
+		this.excercise = isExercise;
+
 		Calendar startDay = Calendar.getInstance();
 		Calendar endDay = Calendar.getInstance();
-		
+
 		startDay.setTime(start);
 		endDay.setTime(end);
-		
+
 		long diff = endDay.getTimeInMillis() - startDay.getTimeInMillis();
 		long days = diff / (24 * 60 * 60 * 1000);
-		
+
 		repeatWeekly = days > 7;
 	}
 
 	public boolean isWeekly() {
 		return repeatWeekly;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
@@ -84,5 +90,29 @@ public class TClass implements Serializable {
 	public void setNotify(boolean notify) {
 		this.notify = notify;
 	}
-	
+
+	public boolean isExcercise() {
+		return excercise;
+	}
+
+	public void setExcercise(boolean excercise) {
+		this.excercise = excercise;
+	}
+
+	public boolean isNewDay() {
+		return newDay;
+	}
+
+	public void setNewDay(boolean newDay) {
+		this.newDay = newDay;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
+
 }

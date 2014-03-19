@@ -1,9 +1,9 @@
 package com.mv2studio.tswp.ui;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 public class BaseFragment extends Fragment {
 

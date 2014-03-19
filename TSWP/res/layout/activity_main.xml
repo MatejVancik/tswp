@@ -2,7 +2,29 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/activity_main_content_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-    
+    android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res/com.mv2studio.tswp">
+
+    <LinearLayout
+        android:id="@+id/activity_main_student_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <com.astuetz.PagerSlidingTabStrip
+            android:id="@+id/student_tabs"
+            android:layout_weight="0"
+            android:layout_width="match_parent"
+            app:pstsIndicatorColor="@color/HoloBlue"
+            app:pstsShouldExpand="true"
+            android:layout_height="48dip" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/student_pager"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </android.support.v4.view.ViewPager>
+    </LinearLayout>
 
 </FrameLayout>

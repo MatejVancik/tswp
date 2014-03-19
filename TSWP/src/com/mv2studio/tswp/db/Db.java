@@ -40,9 +40,10 @@ public class Db {
 	public void insertItems(List<TClass> items) {
 		open();
 		db.beginTransaction();
+		System.out.println("inserting items: "+items.size());
 		for(TClass item: items) {
 			ContentValues values = getContentValues(item);
-			db.insert(SQLHelper.TABLE_SCHOOL, null, values);
+			System.out.println("db: "+db.insert(SQLHelper.TABLE_SCHOOL, null, values));;
 		}
 		db.setTransactionSuccessful();
 		db.endTransaction();
@@ -74,7 +75,7 @@ public class Db {
 	private ContentValues getContentValues(TClass cl) {
 		String name = cl.getName(), room = cl.getRoom();
 		Date start = cl.getStart(), end = cl.getEnd();
-		boolean notify = cl.isNotify();
+		boolean notify = cl.isNotify(), exercise = cl.isExcercise();
 		
 		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
 		String startDate = sdf.format(start);
@@ -85,31 +86,79 @@ public class Db {
 		values.put(SQLHelper.SCHOOL_COLUMN_ROOM, room);
 		values.put(SQLHelper.SCHOOL_COLUMN_START_DATE, startDate);
 		values.put(SQLHelper.SCHOOL_COLUMN_END_DATE, endDate);
+		values.put(SQLHelper.SCHOOL_COLUMN_EXERCISE, exercise);
 		values.put(SQLHelper.SCHOOL_COLUMN_NOTIFY, notify);
 		
 		return values;
 	}
 	
-	public ArrayList<TClass> getAllClasses(){
+	public ArrayList<TClass> getAllEvents(){
 		ArrayList<TClass> classes = new ArrayList<TClass>();
+		
 		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
 		open();
-		Cursor cursor = db.query(SQLHelper.TABLE_SCHOOL, null, null, null, null, null, null);
+		Cursor cursor = db.query(SQLHelper.TABLE_EVENT, null, null, null, null, null, SQLHelper.SCHOOL_COLUMN_START_DATE);
+		
 		if(cursor != null && cursor.moveToFirst()) {
+			Date start = null, end = null;
 			do {
 				int id = cursor.getInt(0);
 				String name = cursor.getString(1),
 					   room = cursor.getString(2);
-				boolean notify = cursor.getInt(5) > 0;
-				Date start = null, end = null;
+				
 				try {
-					start = sdf.parse(cursor.getString(3));
+					Date newStart = sdf.parse(cursor.getString(3));
+					start = newStart;
+					end = sdf.parse(cursor.getString(4));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}	
+				System.out.println("adding: "+name);
+				classes.add(new TClass(id, name, room, start, end, false, false, false));
+				
+			} while(cursor.moveToNext());
+			cursor.close();
+		}
+		close();
+		
+		return classes;
+	}
+	
+	public void insertEvent(TClass event) {
+		ContentValues values = getContentValues(event);
+		values.put(SQLHelper.SCHOOL_COLUMN_ID, event.getId());
+		open();
+		db.insert(SQLHelper.TABLE_EVENT, null, values);
+		close();
+	}
+	
+	
+	public ArrayList<TClass> getAllClasses(){
+		ArrayList<TClass> classes = new ArrayList<TClass>();
+		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+		open();
+		Cursor cursor = db.query(SQLHelper.TABLE_SCHOOL, null, null, null, null, null, SQLHelper.SCHOOL_COLUMN_START_DATE);
+		System.out.println("cursro: "+cursor.getCount());
+		if(cursor != null && cursor.moveToFirst()) {
+			boolean newDay = true;
+			Date start = null, end = null;
+			do {
+				int id = cursor.getInt(0);
+				String name = cursor.getString(1),
+					   room = cursor.getString(2);
+				boolean notify = cursor.getInt(6) > 0,
+						exercise = cursor.getInt(5) >0;
+				
+				try {
+					Date newStart = sdf.parse(cursor.getString(3));
+					newDay = (start == null || start.getDay() != newStart.getDay());
+					start = newStart;
 					end = sdf.parse(cursor.getString(4));
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}	
 				
-				classes.add(new TClass(id, name, room, start, end, notify));
+				classes.add(new TClass(id, name, room, start, end, newDay, exercise, notify));
 				
 			} while(cursor.moveToNext());
 			cursor.close();
