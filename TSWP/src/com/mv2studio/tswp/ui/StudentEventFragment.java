@@ -1,9 +1,15 @@
 package com.mv2studio.tswp.ui;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -23,6 +29,7 @@ import android.widget.TextView;
 
 import com.mv2studio.tswp.R;
 import com.mv2studio.tswp.communication.CommHelper;
+import com.mv2studio.tswp.core.Prefs;
 import com.mv2studio.tswp.db.Db;
 import com.mv2studio.tswp.model.TClass;
 import com.mv2studio.tswp.model.TClass.State;
@@ -32,6 +39,9 @@ public class StudentEventFragment extends BaseFragment {
 	private Context context;
 	private int[] days = { R.string.day_1, R.string.day_2, R.string.day_3, R.string.day_4, R.string.day_5, R.string.day_6, R.string.day_7 };
 
+	public static final String DEP_TAG = "STUDENT_DEPARTMENT", 
+			   YEAR_TAG = "STUDENT_YEAR";
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		context = getActivity();
@@ -48,14 +58,44 @@ public class StudentEventFragment extends BaseFragment {
 
 			@Override
 			protected Void doInBackground(Void... params) {
+				Db db = new Db(context);
+				db.cleanEvents();
+				String json = CommHelper.getHttpPostResponse(
+						"http://tswp.martinviszlai.com/get_events.php?token=" + Prefs.getString(TeacherMainFragment.TOKEN_TAG, getActivity()), 
+						new String[][]{{"department", Prefs.getString(DEP_TAG, context)},{"year", Prefs.getString(YEAR_TAG, context)}}
+				);
 				
-//				String json = CommHelper.getHttpGetReponse("url");
-				
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				int id;
-				String name, room;
+				String name, room, desc;
 				Date start, end;
 				
-//				new TClass(name, room, start, end, false, false);
+				ArrayList<TClass> classes = new ArrayList<TClass>();
+				
+				try {
+					JSONArray array = new JSONArray(json);
+					for(int i = 0; i < array.length(); i++) {
+						JSONObject obj = array.getJSONObject(i);
+						name = obj.getString("title");
+						desc = obj.getString("desc");
+						room = obj.getString("place");
+						start = format.parse(obj.getString("start_date"));
+						end = format.parse(obj.getString("end_date"));
+						JSONArray files = obj.getJSONArray("files");
+						TClass cl = new TClass(name, room, start, end, false, false);
+						
+						for(int j = 0; j < files.length(); j++) {
+							cl.addFile(files.getInt(i));
+						}
+						classes.add(cl);
+						
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				db.insertEvents(classes);
 				
 				return null;
 			}

@@ -37,31 +37,62 @@ public class Db {
 		} catch (Exception e ) {e.printStackTrace();}
 	}
 	
-	public void insertItems(List<TClass> items) {
+	private void insertItems(List<TClass> items, String table) {
 		open();
 		db.beginTransaction();
 		System.out.println("inserting items: "+items.size());
 		for(TClass item: items) {
 			ContentValues values = getContentValues(item);
-			System.out.println("db: "+db.insert(SQLHelper.TABLE_SCHOOL, null, values));;
+			if (table.equals(SQLHelper.TABLE_EVENT)) values.put(SQLHelper.SCHOOL_COLUMN_ID, item.getId());
+			System.out.println("db: "+db.insert(table, null, values));
 		}
 		db.setTransactionSuccessful();
 		db.endTransaction();
 		close();
 	}
 	
-	public void insertItem(TClass cl) {
+	public void insertClasses(List<TClass> items) {
+		insertItems(items, SQLHelper.TABLE_SCHOOL);
+	}
+	
+	public  void insertEvents(List<TClass> events) {
+		insertItems(events, SQLHelper.TABLE_EVENT);
+	}
+	
+	
+	
+	
+	private void insertItem(TClass cl, String table) {
 		ContentValues values = getContentValues(cl);
+		if (table.equals(SQLHelper.TABLE_EVENT)) values.put(SQLHelper.SCHOOL_COLUMN_ID, cl.getId());
 		open();
-		db.insert(SQLHelper.TABLE_SCHOOL, null, values);
+		db.insert(table, null, values);
 		close();
 	}
 	
-	public void removeItem(int id) {
+	public void insertEvent(TClass event) {
+		insertItem(event, SQLHelper.TABLE_EVENT);
+	}
+	
+	public void insertClass(TClass cl) {
+		insertItem(cl, SQLHelper.TABLE_SCHOOL);
+	}
+	
+	
+	
+	public void removeClass(int id) {
 		open();
 		db.delete(SQLHelper.TABLE_SCHOOL, SQLHelper.SCHOOL_COLUMN_ID + " = ?", new String[] {String.valueOf(id)});
 		close();
 	}
+	
+	public void removeEvent(int id) {
+		open();
+		db.delete(SQLHelper.TABLE_EVENT, SQLHelper.SCHOOL_COLUMN_ID + " = ?", new String[] {String.valueOf(id)});
+		close();
+	}
+	
+	
 	
 	public void setNotifyOnClass(int id, boolean notify) {
 		open();
@@ -124,14 +155,20 @@ public class Db {
 		return classes;
 	}
 	
-	public void insertEvent(TClass event) {
-		ContentValues values = getContentValues(event);
-		values.put(SQLHelper.SCHOOL_COLUMN_ID, event.getId());
+	
+	public void cleanEvents() {
+		ArrayList<TClass> events = new ArrayList<TClass>();
 		open();
-		db.insert(SQLHelper.TABLE_EVENT, null, values);
+		db.beginTransaction();
+		for(TClass c: events) {
+			if(c.getStart().after(new Date())) {
+				db.delete(SQLHelper.TABLE_EVENT, SQLHelper.SCHOOL_COLUMN_ID + " = ?", new String[] {String.valueOf(c.getId())});
+			}
+		}
+		db.setTransactionSuccessful();
+		db.endTransaction();
 		close();
 	}
-	
 	
 	public ArrayList<TClass> getAllClasses(){
 		ArrayList<TClass> classes = new ArrayList<TClass>();

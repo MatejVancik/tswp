@@ -19,6 +19,7 @@ public class Notification {
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
 											 .setContentTitle(contentTitle)
 											 .setContentText(contentText)
+											 .setVibrate(new long[] {1000})
 											 .setSmallIcon(R.drawable.ic_launcher);
 		
 		// Creates an explicit intent for an Activity in your app

@@ -1,159 +1,156 @@
-[
-  {
-    "FACULTY": "FEI",
-    "DEPARTMENT": [
-      "Aplikovaná informatika",
-      "Automobilová elektronika",
-      "Elektroenergetika",
-      "Elektronika",
-      "Fyzikálne inžinierstvo moderných materiálov",
-      "Informatika",
-      "Inteligentné systémy",
-      "Hospodárska informatika",
-      "Kybernetika",
-      "Riadenie elektromechanických systémov",
-      "Telekomunikácie",
-      "Počítačové modelovanie",
-      "Priemyselná elektrotechnika",
-      "Elektrotechnické inžinierstvo",
-      "Infoelektronika",
-      "Kybernetika a informačno-riadiace systémy",
-      "Multimediálne telekomunikácie",
-      "Umelá inteligencia",
-      "Priemyselná elektrotechnika",
-      "Progresívne materiály a technológie v automobilovej elektronike"
-    ]
-  },
-  {
-    "FACULTY": "FBERG",
-    "DEPARTMENT": [
-      "Automatizácia a riadenie procesov získavania a spracovania surovín",
-      "Baníctvo a geotechnika",
-      "Dopravná logistika podniku",
-      "Geodézia a geografické informačné systémy",
-      "Geodézia a kataster nehnuteľností",
-      "Geológia a regionálny rozvoj",
-      "Geoprieskum",
-      "Geoturizmus",
-      "Hospodárenie s vodou v komunálnej sfére",
-      "Informatizácia procesov získavania a spracovania surovín",
-      "Manažérstvo procesov",
-      "Manažérstvo zemských zdrojov",
-      "Mineralurgia a environmentálne technológie",
-      "Ochrana životného prostredia a ekotechnológie surovín",
-      "Priemyselná logistika",
-      "Riadenie dopravy surovín",
-      "Riadenie kvality procesov získavania a spracovania surovín",
-      "Technológie v naftárenskom a plynárenskom priemysle",
-      "Využívanie alternatívnych zdrojov energie",
-      "Záchranárska, požiarna a bezpečnostná technika",
-      "Geologické inžinierstvo",
-      "Inžinierska geodézia a kataster nehnuteľností",
-      "Riadenie procesov získavania a spracovania surovín",
-      "Technológie baníctva a tunelárstva"
-    ]
-  },
-  {
-    "FACULTY": "HF",
-    "DEPARTMENT": [
-      "Hutníctvo",
-      "Kovové a nekovové materiály",
-      "Tepelná energetika a plynárenstvo",
-      "Priemyselná keramika",
-      "Integrované systémy riadenia",
-      "Spracovanie a recyklácia odpadov",
-      "Materiály pre automobilový priemysel",
-      "Biometalurgia",
-      "Materiálové a technologické aplikácie pre výtvarnú tvorbu",
-      "Environmentálna chémia",
-      "Hutníctvo železa a ocele",
-      "Zlievarenstvo",
-      "Materiálové inžinierstvo",
-      "Tvárnenie kovov",
-      "Environmentálny analýza"
-    ]
-  },
-  {
-    "FACULTY": "SjF",
-    "DEPARTMENT": [
-      "Automobilová výroba",
-      "Bezpečnosť a ochrana zdravia pri práci",
-      "Environmentálne manažérstvo",
-      "Kvalita produkcie",
-      "Počítačová podpora strojárskej výroby",
-      "Priemyselné inžinierstvo",
-      "Protetika a ortotika",
-      "Technika ochrany životného prostredia",
-      "Riadenie a diagnostika výrobnej,  robotickej  a dopravnej techniky",
-      "Mechatronika",
-      "Všeobecné strojárstvo",
-      "Strojné inžinierstvo",
-      "Manažment technických a  environmentálnych rizík v strojárstve",
-      "Technológie, manažment a inovácie strojárskej  výroby",
-      "Aplikovaná mechanika",
-      "Automatizácia a riadenie strojov a  procesov",
-      "Bezpečnosť technických systémov",
-      "Biomedicínske inžinierstvo",
-      "Dopravná technika a logistika",
-      "Energetické stroje a zariadenia",
-      "Inžinierstvo kvality produkcie",
-      "Robotická technika",
-      "Strojárske technológie",
-      "Stroje a zariadenia pre stavebníctvo,  poľnohospodárstvo a úpravníctvo",
-      "Výrobné stroje a zariadenia"
-    ]
-  },
-  {
-    "FACULTY": "SVF",
-    "DEPARTMENT": [
-      "Pozemné stavby – budovy a prostredie",
-      "Inžinierske konštrukcie a dopravné stavby",
-      "Technológia a manažment v stavebníctve",
-      "Environmentálne inžinierstvo stavieb",
-      "Tvorba budov a prostredia",
-      "Nosné konštrukcie a dopravné stavby",
-      "Stavby s environmentálnym určením"
-    ]
-  },
-  {
-    "FACULTY": "EkF",
-    "DEPARTMENT": [
-      "Financie, bankovníctvo a investovanie",
-      "Verejná správa a regionálny rozvoj"
-    ]
-  },
-  {
-    "FACULTY": "FVT",
-    "DEPARTMENT": [
-      "Výrobné technológie",
-      "Počítačová podpora výrobných technológií",
-      "Manažment výroby",
-      "Prevádzka priemyselných technológií",
-      "Monitoring a diagnostika technických zariadení",
-      "Navrhovanie technických zariadení",
-      "Procesná technika",
-      "Riadenie výroby"
-    ]
-  },
-  {
-    "FACULTY": "FU",
-    "DEPARTMENT": [
-      "Architektúra a urbanizmus",
-      "Dizajn",
-      "Voľné výtvarné umenie"
-    ]
-  },
-  {
-    "FACULTY": "LF",
-    "DEPARTMENT": [
-      "Riadenie leteckej dopravy",
-      "Profesionálny pilot",
-      "Riadenie letovej prevádzky",
-      "Prevádzka letísk",
-      "Prevádzka lietadiel",
-      "Avionické systémy",
-      "Senzorika",
-      "Senzorika a avionické systémy"
-    ]
-  }
+[{
+"FACULTY": "FEI",
+"DEPARTMENT": [
+{ "id" : 1, "name" : "Aplikovaná informatika"},
+{ "id" : 2, "name" : "Automobilová elektronika"},
+{ "id" : 3, "name" : "Elektroenergetika"},
+{ "id" : 4, "name" : "Elektronika"},
+{ "id" : 5, "name" : "Fyzikálne inžinierstvo moderných materiálov"},
+{ "id" : 6, "name" : "Informatika"},
+{ "id" : 7, "name" : "Inteligentné systémy"},
+{ "id" : 8, "name" : "Hospodárska informatika"},
+{ "id" : 9, "name" : "Kybernetika"},
+{ "id" : 10, "name" : "Riadenie elektromechanických systémov"},
+{ "id" : 11, "name" : "Telekomunikácie"},
+{ "id" : 12, "name" : "Poèítaèové modelovanie"},
+{ "id" : 13, "name" : "Priemyselná elektrotechnika"},
+{ "id" : 14, "name" : "Elektrotechnické inžinierstvo"},
+{ "id" : 15, "name" : "Infoelektronika"},
+{ "id" : 16, "name" : "Kybernetika a informaèno-riadiace systémy"},
+{ "id" : 17, "name" : "Multimediálne telekomunikácie"},
+{ "id" : 18, "name" : "Umelá inteligencia"},
+{ "id" : 19, "name" : "Progresívne materiály a technológie v automobilovej elektronike"}
 ]
+},
+{
+"FACULTY": "FBERG",
+"DEPARTMENT": [
+{ "id" : 20, "name" : "Automatizácia a riadenie procesov získavania a spracovania surovín"},
+{ "id" : 21, "name" : "Baníctvo a geotechnika"},
+{ "id" : 22, "name" : "Dopravná logistika podniku"},
+{ "id" : 23, "name" : "Geodézia a geografické informaèné systémy"},
+{ "id" : 24, "name" : "Geodézia a kataster nehnute¾ností"},
+{ "id" : 25, "name" : "Geológia a regionálny rozvoj"},
+{ "id" : 26, "name" : "Geoprieskum"},
+{ "id" : 27, "name" : "Geoturizmus"},
+{ "id" : 28, "name" : "Hospodárenie s vodou v komunálnej sfére"},
+{ "id" : 29, "name" : "Informatizácia procesov získavania a spracovania surovín"},
+{ "id" : 30, "name" : "Manažérstvo procesov"},
+{ "id" : 31, "name" : "Manažérstvo zemských zdrojov"},
+{ "id" : 32, "name" : "Mineralurgia a environmentálne technológie"},
+{ "id" : 33, "name" : "Ochrana životného prostredia a ekotechnológie surovín"},
+{ "id" : 34, "name" : "Priemyselná logistika"},
+{ "id" : 35, "name" : "Riadenie dopravy surovín"},
+{ "id" : 36, "name" : "Riadenie kvality procesov získavania a spracovania surovín"},
+{ "id" : 37, "name" : "Technológie v naftárenskom a plynárenskom priemysle"},
+{ "id" : 38, "name" : "Využívanie alternatívnych zdrojov energie"},
+{ "id" : 39, "name" : "Záchranárska, požiarna a bezpeènostná technika"},
+{ "id" : 40, "name" : "Geologické inžinierstvo"},
+{ "id" : 41, "name" : "Inžinierska geodézia a kataster nehnute¾ností"},
+{ "id" : 42, "name" : "Riadenie procesov získavania a spracovania surovín"},
+{ "id" : 43, "name" : "Technológie baníctva a tunelárstva"}
+]
+},
+{
+"FACULTY": "HF",
+"DEPARTMENT": [
+{ "id" : 44, "name" : "Hutníctvo"},
+{ "id" : 45, "name" : "Kovové a nekovové materiály"},
+{ "id" : 46, "name" : "Tepelná energetika a plynárenstvo"},
+{ "id" : 47, "name" : "Priemyselná keramika"},
+{ "id" : 48, "name" : "Integrované systémy riadenia"},
+{ "id" : 49, "name" : "Spracovanie a recyklácia odpadov"},
+{ "id" : 50, "name" : "Materiály pre automobilový priemysel"},
+{ "id" : 51, "name" : "Biometalurgia"},
+{ "id" : 52, "name" : "Materiálové a technologické aplikácie pre výtvarnú tvorbu"},
+{ "id" : 53, "name" : "Environmentálna chémia"},
+{ "id" : 54, "name" : "Hutníctvo železa a ocele"},
+{ "id" : 55, "name" : "Zlievarenstvo"},
+{ "id" : 56, "name" : "Materiálové inžinierstvo"},
+{ "id" : 57, "name" : "Tvárnenie kovov"},
+{ "id" : 58, "name" : "Environmentálny analýza"}
+]
+},
+{
+"FACULTY": "SjF",
+"DEPARTMENT": [
+{ "id" : 59, "name" : "Automobilová výroba"},
+{ "id" : 60, "name" : "Bezpeènos a ochrana zdravia pri práci"},
+{ "id" : 61, "name" : "Environmentálne manažérstvo"},
+{ "id" : 62, "name" : "Kvalita produkcie"},
+{ "id" : 63, "name" : "Poèítaèová podpora strojárskej výroby"},
+{ "id" : 64, "name" : "Priemyselné inžinierstvo"},
+{ "id" : 65, "name" : "Protetika a ortotika"},
+{ "id" : 66, "name" : "Technika ochrany životného prostredia"},
+{ "id" : 67, "name" : "Riadenie a diagnostika výrobnej,  robotickej  a dopravnej techniky"},
+{ "id" : 68, "name" : "Mechatronika"},
+{ "id" : 69, "name" : "Všeobecné strojárstvo"},
+{ "id" : 70, "name" : "Strojné inžinierstvo"},
+{ "id" : 71, "name" : "Manažment technických a  environmentálnych rizík v strojárstve"},
+{ "id" : 72, "name" : "Technológie, manažment a inovácie strojárskej  výroby"},
+{ "id" : 73, "name" : "Aplikovaná mechanika"},
+{ "id" : 74, "name" : "Automatizácia a riadenie strojov a  procesov"},
+{ "id" : 75, "name" : "Bezpeènos technických systémov"},
+{ "id" : 76, "name" : "Biomedicínske inžinierstvo"},
+{ "id" : 77, "name" : "Dopravná technika a logistika"},
+{ "id" : 78, "name" : "Energetické stroje a zariadenia"},
+{ "id" : 79, "name" : "Inžinierstvo kvality produkcie"},
+{ "id" : 80, "name" : "Robotická technika"},
+{ "id" : 81, "name" : "Strojárske technológie"},
+{ "id" : 82, "name" : "Stroje a zariadenia pre stavebníctvo,  po¾nohospodárstvo a úpravníctvo"},
+{ "id" : 83, "name" : "Výrobné stroje a zariadenia"}
+]
+},
+{
+"FACULTY": "SVF",
+"DEPARTMENT": [
+{ "id" : 84, "name" : "Pozemné stavby – budovy a prostredie"},
+{ "id" : 85, "name" : "Inžinierske konštrukcie a dopravné stavby"},
+{ "id" : 86, "name" : "Technológia a manažment v stavebníctve"},
+{ "id" : 87, "name" : "Environmentálne inžinierstvo stavieb"},
+{ "id" : 88, "name" : "Tvorba budov a prostredia"},
+{ "id" : 89, "name" : "Nosné konštrukcie a dopravné stavby"},
+{ "id" : 90, "name" : "Stavby s environmentálnym urèením"}
+]
+},
+{
+"FACULTY": "EkF",
+"DEPARTMENT": [
+{ "id" : 91, "name" : "Financie, bankovníctvo a investovanie"},
+{ "id" : 92, "name" : "Verejná správa a regionálny rozvoj"}
+]
+},
+{
+"FACULTY": "FVT",
+"DEPARTMENT": [
+{ "id" : 93, "name" : "Výrobné technológie"},
+{ "id" : 94, "name" : "Poèítaèová podpora výrobných technológií"},
+{ "id" : 95, "name" : "Manažment výroby"},
+{ "id" : 96, "name" : "Prevádzka priemyselných technológií"},
+{ "id" : 97, "name" : "Monitoring a diagnostika technických zariadení"},
+{ "id" : 98, "name" : "Navrhovanie technických zariadení"},
+{ "id" : 99, "name" : "Procesná technika"},
+{ "id" : 100, "name" : "Riadenie výroby"}
+]
+},
+{
+"FACULTY": "FU",
+"DEPARTMENT": [
+{ "id" : 101, "name" : "Architektúra a urbanizmus"},
+{ "id" : 102, "name" : "Dizajn"},
+{ "id" : 103, "name" : "Vo¾né výtvarné umenie"}
+]
+},
+{
+"FACULTY": "LF",
+"DEPARTMENT": [
+{ "id" : 104, "name" : "Riadenie leteckej dopravy"},
+{ "id" : 105, "name" : "Profesionálny pilot"},
+{ "id" : 106, "name" : "Riadenie letovej prevádzky"},
+{ "id" : 107, "name" : "Prevádzka letísk"},
+{ "id" : 108, "name" : "Prevádzka lietadiel"},
+{ "id" : 109, "name" : "Avionické systémy"},
+{ "id" : 110, "name" : "Senzorika"},
+{ "id" : 111, "name" : "Senzorika a avionické systémy"}
+]
+}]

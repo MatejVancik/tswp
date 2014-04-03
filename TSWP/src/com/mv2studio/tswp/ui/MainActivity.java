@@ -13,6 +13,7 @@ import android.view.View;
 import com.astuetz.PagerSlidingTabStrip;
 import com.mv2studio.tswp.R;
 import com.mv2studio.tswp.core.MaisCalendarParser;
+import com.mv2studio.tswp.core.Prefs;
 
 public class MainActivity extends FragmentActivity {
 	
@@ -33,18 +34,15 @@ public class MainActivity extends FragmentActivity {
 		tLight = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Light.ttf");
 		tCond = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Condensed.ttf");
 		tCondBold = Typeface.createFromAsset(getAssets(), "fonts/Roboto-BoldCondensed.ttf");
-//		MaisCalendarParser.parseCalendar(this);
 
 		// load prefs
-		boolean isLogged = true; //Prefs.getBoolValue(P_LOGGED_KEY, this);
-		boolean isTeacher = false; //Prefs.getBoolValue(P_USER_TYPE_KEY, this);
-		
-		int contentView = R.id.activity_main_content_view;
+		boolean isLogged = Prefs.getBoolValue(P_LOGGED_KEY, this);
+		boolean isTeacher = Prefs.getBoolValue(P_TEACHER_KEY, this);
 		
 		// choose the right fragment
 		if(isLogged) {
 			if(isTeacher) {
-				getSupportFragmentManager().beginTransaction().replace(contentView, new TeacherMainFragment()).commit();
+				replaceFragment(new TeacherMainFragment());
 			} else {
 				findViewById(R.id.activity_main_student_layout).setVisibility(View.VISIBLE);
 				ViewPager pager = (ViewPager) findViewById(R.id.student_pager);
@@ -53,11 +51,15 @@ public class MainActivity extends FragmentActivity {
 				tabs.setViewPager(pager);
 			}
 		} else {
-			getSupportFragmentManager().beginTransaction().replace(contentView, new WizardFragment()).commit();
+			replaceFragment(new WizardFragment());
 		}
 		
 	}
 
+	public void replaceFragment(Fragment fragment) {
+		getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_content_view, fragment).commit();
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -115,7 +117,7 @@ public class MainActivity extends FragmentActivity {
 			case 0:
 				return "rozvrh";
 			case 1:
-				return "prednasky";
+				return "udalosti";
 			default: return "";
 			}
 			

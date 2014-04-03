@@ -1,6 +1,7 @@
 package com.mv2studio.tswp.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -9,10 +10,11 @@ public class TClass implements Serializable {
 	private static final long serialVersionUID = -8639004259345142397L;
 	private int id;
 	private State state = State.NUL;
-	private String name, room;
+	private String name, desc, room;
 	private Date start, end;
 	private boolean notify, repeatWeekly, excercise, newDay;
-
+	private ArrayList<Integer> files = new ArrayList<Integer>();
+	
 	public enum State {
 		NUL, NEXT, RUN
 	}
@@ -41,6 +43,19 @@ public class TClass implements Serializable {
 		long days = diff / (24 * 60 * 60 * 1000);
 
 		repeatWeekly = days > 7;
+	}
+	
+	public TClass(String name, String desc, String room, Date start, Date end, boolean isExercise, boolean notify) {
+		this(name, room, start, end, notify, isExercise);
+		this.desc = desc;
+	}
+	
+	public void addFile(int i) {
+		files.add(i);
+	}
+	
+	public ArrayList<Integer> getFiles(){
+		return files;
 	}
 
 	public boolean isWeekly() {
@@ -113,6 +128,14 @@ public class TClass implements Serializable {
 
 	public void setState(State state) {
 		this.state = state;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
 	}
 
 }

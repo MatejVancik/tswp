@@ -209,84 +209,20 @@
                     android:layout_weight="0"
                     android:padding="15dp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0"
-                    android:layout_marginTop="20dp"
-                    android:orientation="horizontal" >
-
-                    <RelativeLayout
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_margin="10dp"
-                        android:layout_weight="0"
-                        android:background="@drawable/circle"
-                        android:gravity="center_vertical" >
-
-                        <TextView
-                            android:id="@+id/wizard_fragment_student_layout_num3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:layout_marginLeft="2dp"
-                            android:text="3"
-                            android:textColor="#fff"
-                            android:textSize="30sp" />
-                    </RelativeLayout>
-
-                    <TextView
-                        android:id="@+id/wizard_fragment_student_layout_title3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="0"
-                        android:gravity="center_vertical"
-                        android:text="PRIHLÁSTE SA DO MAISU"
-                        android:textColor="@color/HoloBlueDark"
-                        android:textSize="20sp" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="0"
-                    android:background="@color/HoloBlue" />
-
-                <Button
-                    android:id="@+id/wizard_fragment_student_mais"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="20dp"
-                    android:layout_weight="0"
-                    android:background="@drawable/button_selector_orange"
-                    android:paddingLeft="40dp"
-                    android:paddingRight="40dp"
-                    android:text="PRIHLÁSIŤ"
-                    android:textColor="#fff" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
             </LinearLayout>
         </ScrollView>
 
         <Button
-            android:id="@+id/wizard_fragment_student_next"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_weight="0"
-            android:background="@drawable/button_selector_green"
-            android:text="ĎALEJ"
-            android:textColor="#fff" />
+                    android:id="@+id/wizard_fragment_student_mais"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="0"
+                    android:background="@drawable/button_selector_orange"
+                    android:paddingLeft="40dp"
+                    android:paddingRight="40dp"
+                    android:text="VYBRAŤ ROZVRH"
+                    android:textColor="#fff" />
     </LinearLayout>
 
     <LinearLayout

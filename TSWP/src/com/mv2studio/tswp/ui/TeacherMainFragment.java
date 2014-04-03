@@ -1,8 +1,8 @@
 package com.mv2studio.tswp.ui;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -15,32 +15,43 @@ import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.mv2studio.tswp.R;
-import com.mv2studio.tswp.db.Db;
+import com.mv2studio.tswp.adapter.SpinnerAdapter;
+import com.mv2studio.tswp.communication.CommHelper;
+import com.mv2studio.tswp.core.Prefs;
+import com.mv2studio.tswp.model.Department;
+import com.mv2studio.tswp.model.Faculty;
 import com.mv2studio.tswp.model.TClass;
 
 public class TeacherMainFragment extends BaseFragment {
 
 	private Context context;
 	private static String IS_EDIT = "edit", CLASS_TAG = "class";
+	public static final String TOKEN_TAG = "token";
 	
 	
 	@Override
@@ -159,17 +170,21 @@ public class TeacherMainFragment extends BaseFragment {
 	private class EditorDialog extends DialogFragment {
 
 		private TextView start, end, title, attach;
-		private EditText name, desc;
+		private EditText name, desc, room;
 		private Button startTimeBut, startDateBut, endTimeBut, endDateBut, fileChooserBut, cancel, ok;
+		private Spinner yearSpin, facSpin, DepSpin;
 		private String timeFormat = "HH:mm";
 		private String dateFormat = "dd.MMM.yyyy";
 		private Date startDate, endDate;
 		private TClass thisClass;
-
+		private LinearLayout filesLayout;
+		private ArrayList<UploadFileHolder> files;
+		
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 			setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+			files = new ArrayList<TeacherMainFragment.UploadFileHolder>();
 		}
 
 		@Override
@@ -178,6 +193,50 @@ public class TeacherMainFragment extends BaseFragment {
 			Bundle b = getArguments();
 			thisClass = (TClass) b.getSerializable(CLASS_TAG);
 			boolean isEdit = b.getBoolean(IS_EDIT);
+			endDate = new Date();
+			startDate = new Date();
+			filesLayout = (LinearLayout) v.findViewById(R.id.class_edit_files_layout);
+			
+			
+			final ArrayList<Faculty> deps = Department.getDepartments(getActivity());
+			
+			List<String> list = new ArrayList<String>();
+			for (Faculty dep : deps)
+				list.add(dep.faculty);
+			
+			yearSpin = (Spinner) v.findViewById(R.id.class_edit_student_year);
+			List<CharSequence> years =  Arrays.asList(getResources().getTextArray(R.array.years));
+			final ArrayAdapter<String> yearAdapter = new SpinnerAdapter(context, android.R.layout.simple_spinner_item, years);
+			yearSpin.setAdapter(yearAdapter);
+			
+			DepSpin = (Spinner) v.findViewById(R.id.class_edit_student_dep);
+			final ArrayAdapter<Department> departmentsAdapter = new SpinnerAdapter(context, android.R.layout.simple_spinner_item, new ArrayList<Department>()); //new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, new ArrayList<String>());
+			DepSpin.setAdapter(departmentsAdapter);
+			
+			facSpin = (Spinner) v.findViewById(R.id.class_edit_student_faculty);
+			ArrayAdapter<String> facultyAdapter = new SpinnerAdapter(context, android.R.layout.simple_spinner_item, list);//new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, list);
+			facSpin.setAdapter(facultyAdapter);
+			facSpin.setOnItemSelectedListener(new OnItemSelectedListener() {
+				@Override
+				public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+					List<Department> items = new ArrayList<Department>();
+					for (Faculty fac : deps)
+						if (fac.faculty.equals(facSpin.getSelectedItem()))
+							items = fac.dep;
+					departmentsAdapter.clear();
+					departmentsAdapter.addAll(items);
+					departmentsAdapter.notifyDataSetChanged();
+				}
+
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) {
+					departmentsAdapter.clear();
+					departmentsAdapter.notifyDataSetChanged();
+				}
+			});
+			
+			
+			
 			
 			OnClickListener timeDatelickListener = new OnClickListener() {
 
@@ -214,9 +273,21 @@ public class TeacherMainFragment extends BaseFragment {
 				public void onClick(View v) {
 					switch (v.getId()) {
 					case R.id.class_edit_ok:
-
-						// send to server, notify adapter
+						if(name.getText().toString().isEmpty())
+							name.setError("Musíte zadať názov udalosti");
+						if(desc.getText().toString().isEmpty())
+							desc.setError("Musíte zadať popis udalosti");
 						
+						
+						
+						// send to server, notify adapter
+						TClass cl = new TClass(name.getText().toString(), desc.getText().toString(),
+								room.getText().toString(), startDate, endDate, false, false);
+						
+						int id = ((Department)DepSpin.getSelectedItem()).id;
+						int year = yearSpin.getSelectedItemPosition();
+						
+						new SendClassTask(cl, files, id, year).execute();
 						
 						
 						break;
@@ -234,6 +305,8 @@ public class TeacherMainFragment extends BaseFragment {
 				}
 			};
 
+			
+			
 			SimpleDateFormat timeF = new SimpleDateFormat(timeFormat), dateF = new SimpleDateFormat(dateFormat);
 
 			ok = (Button) v.findViewById(R.id.class_edit_ok);
@@ -253,8 +326,10 @@ public class TeacherMainFragment extends BaseFragment {
 
 			name = (EditText) v.findViewById(R.id.class_edit_name);
 			desc = (EditText) v.findViewById(R.id.class_edit_desc);
+			room = (EditText) v.findViewById(R.id.class_edit_room);
 			name.setTypeface(tCond);
 			desc.setTypeface(tCond);
+			room.setTypeface(tCond);
 
 			startTimeBut = (Button) v.findViewById(R.id.class_edit_start_time);
 			startTimeBut.setOnClickListener(timeDatelickListener);
@@ -316,11 +391,16 @@ public class TeacherMainFragment extends BaseFragment {
 
 					// Get the File path from the Uri
 					String path = FileUtils.getPath(getActivity(), uri);
-
-					// Alternatively, use FileUtils.getFile(Context, Uri)
-					if (path != null && FileUtils.isLocal(path)) {
-						File file = new File(path);
-					}
+					final UploadFileHolder f = new UploadFileHolder(path, context);
+					f.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							files.remove(f);
+							filesLayout.removeView(f.getView());
+						}
+					});
+					files.add(f);
+					filesLayout.addView(f.getView());
 				}
 				break;
 			}
@@ -350,5 +430,77 @@ public class TeacherMainFragment extends BaseFragment {
 				endDate = c.getTime();
 		}
 
+	}
+	
+	private class SendClassTask extends AsyncTask<Void, Void, Void>{
+
+		TClass cl;
+		ArrayList<UploadFileHolder> files;
+		int id, year;
+		
+		public SendClassTask(TClass cl, ArrayList<UploadFileHolder> files, int id, int year) {
+			this.cl = cl;
+			this.files = files;
+			this.id = id;
+			this.year = year;
+		}
+		
+		@Override
+		protected Void doInBackground(Void... params) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			
+			String retID = CommHelper.getHttpPostResponse("http://tswp.martinviszlai.com/create_event.php?token="+Prefs.getString(TOKEN_TAG, context), 
+					new String[][] {{"title", cl.getName()}, 
+				{"desc", cl.getDesc()},
+				{"place", cl.getRoom()},
+				{"start_date", sdf.format(cl.getStart())},
+				{"end_date", sdf.format(cl.getEnd())},
+				{"department", id+""},
+				{"year", year+""}
+			});
+			
+			Log.w("", "token: "+Prefs.getString(TOKEN_TAG, context));
+			
+			Log.e("", "title: "+cl.getName()+"  place: "+cl.getRoom()+"  desc: "+cl.getDesc()+"  dep: "+id+"  year: "+year+"time: "+ sdf.format(cl.getStart()));
+			Log.e("", "GET BACK: '"+retID+"'");
+			
+			return null;
+		}
+		
+	}
+	
+	
+	
+	public static class UploadFileHolder {
+		ImageButton but;
+		String path;
+		View v;
+		
+		public UploadFileHolder(String path, Context context) {
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			v = inflater.inflate(R.layout.upload_item, null);
+			TextView text = (TextView) v.findViewById(R.id.upload_item_text);
+			String[] title = path.split("/");
+			this.path = path;
+			text.setText(title[title.length-1]);
+			but = (ImageButton) v.findViewById(R.id.upload_item_remove);
+		}
+		
+		public void setOnClickListener(OnClickListener listener) {
+			but.setOnClickListener(listener);
+		}
+		
+		public String getPath() {
+			return path;
+		}
+		
+		public View getView() {
+			return v;
+		}
+		@Override
+		public boolean equals(Object o) {
+			if (o == null) return false;
+			return path.equals(((UploadFileHolder)o).getPath()); 
+		}
 	}
 }

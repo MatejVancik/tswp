@@ -8,6 +8,7 @@ import java.util.List;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mv2studio.tswp.R;
+import com.mv2studio.tswp.core.NotificationService;
 import com.mv2studio.tswp.db.Db;
 import com.mv2studio.tswp.model.TClass;
 import com.mv2studio.tswp.model.TClass.State;
@@ -49,36 +51,42 @@ public class StudentScheduleFragment extends BaseFragment {
 					clas.setState(State.NUL);
 				}
 
-				for (int i = classes.size()-1; i >= 0; i--) {
+				for (int i = 0; i < classes.size(); i++) {
 					TClass cl = classes.get(i);
 					Date start = cl.getStart();
 					Date end = cl.getEnd();
+					
+					Calendar ee = Calendar.getInstance();
+					ee.setTime(end);
+					
+					Calendar ss = Calendar.getInstance();
+					ss.setTime(start);
+					
 					Calendar cStart = Calendar.getInstance();
 					cStart.setTime(new Date());
+					cStart.set(Calendar.WEEK_OF_MONTH, cStart.get(Calendar.WEEK_OF_MONTH));
 					cStart.set(Calendar.HOUR_OF_DAY, start.getHours());
 					cStart.set(Calendar.MINUTE, start.getMinutes());
-					cStart.set(Calendar.DAY_OF_WEEK, start.getDay());
+					cStart.set(Calendar.DAY_OF_WEEK, ss.get(Calendar.DAY_OF_WEEK));
 
 					Calendar cEnd = Calendar.getInstance();
 					cEnd.setTime(new Date());
+					cEnd.set(Calendar.WEEK_OF_MONTH, cEnd.get(Calendar.WEEK_OF_MONTH));
 					cEnd.set(Calendar.HOUR_OF_DAY, end.getHours());
 					cEnd.set(Calendar.MINUTE, end.getMinutes());
-					cEnd.set(Calendar.DAY_OF_WEEK, end.getDay());
+					cEnd.set(Calendar.DAY_OF_WEEK, ee.get(Calendar.DAY_OF_WEEK));
 
 					Calendar nowCalendar = Calendar.getInstance();
 					nowCalendar.setTime(new Date());
-
+					
 					if (nowCalendar.before(cEnd)) {
 						if (nowCalendar.before(cStart)) {
 							cl.setState(State.NEXT);
 						} else {
 							cl.setState(State.RUN);
 						}
-
 						break;
 					}
-					
-					if(i == 0) classes.get(0).setState(State.NEXT);
 				}
 				adapter.notifyDataSetChanged();
 				
@@ -153,9 +161,13 @@ public class StudentScheduleFragment extends BaseFragment {
 					if (cl.isNotify()) {
 						v.setBackgroundResource(R.drawable.circle_green_selector);
 						((ImageButton) v).setImageResource(R.drawable.vv);
+						NotificationService.setAlarm(cl, getActivity());
+						
 					} else {
 						v.setBackgroundResource(R.drawable.circle_red_selector);
 						((ImageButton) v).setImageResource(R.drawable.xx);
+						NotificationService.cancelAlarm(cl, getActivity());
+						
 					}
 
 				}
@@ -179,6 +191,9 @@ public class StudentScheduleFragment extends BaseFragment {
 				holder.line.setBackgroundResource(R.color.gray_total);
 				break;
 			case RUN:
+				holder.image.setImageResource(R.drawable.play);
+				holder.line.setBackgroundResource(R.drawable.green_gray_gradient);
+				break;
 			}
 
 			holder.t.setText(cl.getName());

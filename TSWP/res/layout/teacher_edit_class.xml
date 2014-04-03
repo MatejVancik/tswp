@@ -14,9 +14,9 @@
         android:paddingRight="10dp"
         android:paddingTop="15dp"
         android:text="Editovať event"
-        android:textStyle="bold"
         android:textColor="@color/HoloBlue"
-        android:textSize="25sp" />
+        android:textSize="25sp"
+        android:textStyle="bold" />
 
     <View
         android:layout_width="match_parent"
@@ -32,8 +32,8 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:scrollbars="none"
-        android:padding="10dp" >
+        android:padding="10dp"
+        android:scrollbars="none" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,15 +44,68 @@
                 android:id="@+id/class_edit_name"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:singleLine="true"
-                android:hint="názov udalosti" />
+                android:hint="názov udalosti"
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/class_edit_desc"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:singleLine="true"
-                android:hint="popis udalosti" />
+                android:hint="popis udalosti"
+                android:singleLine="true" />
+            
+            <EditText
+                android:id="@+id/class_edit_room"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:hint="miesto udalosti"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/class_edit_start_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Určené pre:"
+                android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginBottom="5dp"
+                android:background="@color/gray_shadow" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="0" >
+
+                <Spinner
+                    android:id="@+id/class_edit_student_faculty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp" />
+
+                <Spinner
+                    android:id="@+id/class_edit_student_year"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/class_edit_student_faculty"
+                    android:entries="@array/years"
+                    android:padding="15dp" />
+            </RelativeLayout>
+
+            <Spinner
+                android:id="@+id/class_edit_student_dep"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="0"
+                android:padding="15dp" />
 
             <TextView
                 android:id="@+id/class_edit_start_title"
@@ -96,7 +149,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="Koniec:"
-                 android:textSize="16sp" />
+                android:textSize="16sp" />
 
             <View
                 android:layout_width="match_parent"
@@ -146,6 +199,12 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/imagebutton_selector"
                 android:text="Pridať súbor" />
+
+            <LinearLayout
+                android:id="@+id/class_edit_files_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
         </LinearLayout>
     </ScrollView>
 

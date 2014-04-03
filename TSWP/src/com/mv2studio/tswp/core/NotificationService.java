@@ -40,11 +40,11 @@ public class NotificationService extends Service {
 	private void setAllAlarms() {
 		ArrayList<TClass> classes = new Db(this).getAllClasses();
 		for(TClass cl: classes) {
-			if(cl.isNotify()) setAlarm(cl);
+			if(cl.isNotify()) setAlarm(cl, this);
 		}
 	}
-
-	public void setAlarm(TClass tClass) {
+	
+	public static void setAlarm(TClass tClass, Context context) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(tClass.getStart());
 
@@ -56,13 +56,21 @@ public class NotificationService extends Service {
 		Log.e("", "SETTING NOTIFICATION AT: "+calendar.getTimeInMillis());
 		
 		
-		AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-		Intent intent = new Intent(this, AlarmManagerBroadcastReceiver.class);
+		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		Intent intent = new Intent(context, AlarmManagerBroadcastReceiver.class);
 		intent.setAction(ALARM_TAG);
 		intent.putExtra(TCLASS_KEY, tClass);
-		PendingIntent pi = PendingIntent.getBroadcast(this, tClass.getId(), intent, 0);
+		PendingIntent pi = PendingIntent.getBroadcast(context, tClass.getId(), intent, 0);
 //		AlarmManager.INTERVAL_DAY * 7
 //		am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000, pi);
 		am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pi);
+	}
+
+	
+	public static void cancelAlarm(TClass tClass, Context context) {
+		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		Intent updateServiceIntent = new Intent(context, AlarmManagerBroadcastReceiver.class);
+	    PendingIntent pendingUpdateIntent = PendingIntent.getBroadcast(context, tClass.getId(), updateServiceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+	    am.cancel(pendingUpdateIntent);
 	}
 }
