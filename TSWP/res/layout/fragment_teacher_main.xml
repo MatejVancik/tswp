@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
     
     <ListView 
         android:id="@+id/fragment_teacher_main_list"
@@ -12,17 +11,48 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingTop="10dp"
+		android:dividerHeight="0dp"
         android:paddingBottom="10dp"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"
+        android:layout_above="@+id/fragment_teacher_main_add_button" />
+    
+    
+	<LinearLayout 
+	    android:id="@+id/fragment_teacher_loading"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_above="@+id/fragment_teacher_main_add_button"
+	    android:gravity="center_horizontal|bottom"
+	    android:orientation="vertical"
+	    android:background="#fff" >
+	    
+	    <ProgressBar
+	        android:layout_height="80dp"
+	        android:layout_width="80dp"
+	        android:layout_weight="1"
+	         />
+	    
+	    <TextView 
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Sťahujem dáta"
+	        android:textSize="30sp"
+	        android:layout_weight="2"
+	        android:textColor="@color/HoloBlue"
+	        android:gravity="top|center_horizontal"/>
+	    
+	</LinearLayout>
+    
     
     <Button
         android:id="@+id/fragment_teacher_main_add_button" 
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_weight="0"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/button_selector_green"
         android:text="Pridať prednášku"
         android:textColor="#fff"/>
     
 
-</LinearLayout>
+</RelativeLayout>

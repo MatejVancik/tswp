@@ -1,5 +1,7 @@
 package com.mv2studio.tswp.ui;
 
+import android.app.ActionBar;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,26 +9,61 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Menu;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.mv2studio.tswp.R;
-import com.mv2studio.tswp.core.MaisCalendarParser;
 import com.mv2studio.tswp.core.Prefs;
 
 public class MainActivity extends FragmentActivity {
 	
 	protected Typeface tLight, tCond, tCondBold, tCondLight, tThin;
+	
+	private ImageButton refreshButton;
+	
 	protected OnBackPressedListener onBackPressedListener;
+	protected OnRefreshClickListener onRefreshListener;
 	public static String P_LOGGED_KEY = "logged",
 					     P_USER_TYPE_KEY = "user",
 					     P_STUDENT_KEY = "student",
 					     P_TEACHER_KEY = "teacher";
 	
+	protected void onCreateActionBar() {
+		ActionBar bar = getActionBar();
+		bar.setCustomView(R.layout.action_bar_student);
+		bar.setDisplayShowCustomEnabled(true);
+		
+		View barView = bar.getCustomView();
+		
+		
+		OnClickListener actionBarClickListener = new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				switch(v.getId()) {
+				case R.id.action_bar_refresh:
+					if(onRefreshListener != null) onRefreshListener.onRefresh(refreshButton);
+					break;
+				case R.id.action_bar_settings:
+					Intent i = new Intent(getApplicationContext(), SettingsActivity.class);
+					startActivity(i);
+					break;
+				}
+			}
+		};
+		
+		barView.findViewById(R.id.action_bar_settings).setOnClickListener(actionBarClickListener);
+		refreshButton = (ImageButton) barView.findViewById(R.id.action_bar_refresh);
+		refreshButton.setOnClickListener(actionBarClickListener);
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		onCreateActionBar();
 		setContentView(R.layout.activity_main);
 		
 		tThin = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Thin.ttf");
@@ -49,22 +86,27 @@ public class MainActivity extends FragmentActivity {
 				pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
 				PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.student_tabs);
 				tabs.setViewPager(pager);
+				
+				tabs.setOnPageChangeListener(new OnPageChangeListener() {
+					@Override
+					public void onPageSelected(int arg0) {
+						setRefreshEnabled(arg0 == 1); // enable refresh only on second page
+					}
+					@Override public void onPageScrolled(int arg0, float arg1, int arg2) {}
+					@Override public void onPageScrollStateChanged(int arg0) {}
+				});
+				
 			}
+			
 		} else {
 			replaceFragment(new WizardFragment());
 		}
 		
 	}
 
+
 	public void replaceFragment(Fragment fragment) {
 		getSupportFragmentManager().beginTransaction().replace(R.id.activity_main_content_view, fragment).commit();
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.login, menu);
-		return true;
 	}
 	
 	
@@ -123,6 +165,18 @@ public class MainActivity extends FragmentActivity {
 			
 		}
 		
+	}
+	
+	public void setRefreshEnabled(boolean enabled) {
+		refreshButton.setEnabled(enabled);
+	}
+	
+	public void setOnRefreshClickListener(OnRefreshClickListener listener) {
+		onRefreshListener = listener;
+	}
+	
+	public interface OnRefreshClickListener {
+		public void onRefresh(ImageButton button);
 	}
 
 }

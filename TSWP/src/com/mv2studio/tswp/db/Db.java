@@ -7,12 +7,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.mv2studio.tswp.model.EventFile;
 import com.mv2studio.tswp.model.TClass;
 
 public class Db {
@@ -43,7 +48,11 @@ public class Db {
 		System.out.println("inserting items: "+items.size());
 		for(TClass item: items) {
 			ContentValues values = getContentValues(item);
-			if (table.equals(SQLHelper.TABLE_EVENT)) values.put(SQLHelper.SCHOOL_COLUMN_ID, item.getId());
+			if (table.equals(SQLHelper.TABLE_EVENT)) {
+				values.put(SQLHelper.SCHOOL_COLUMN_ID, item.getId());
+				values.put(SQLHelper.EVENT_COLUMN_DESC, item.getDesc());
+				values.put(SQLHelper.EVENT_COLUMN_FILES, getFilesString(item.getFiles()));
+			}
 			System.out.println("db: "+db.insert(table, null, values));
 		}
 		db.setTransactionSuccessful();
@@ -58,13 +67,44 @@ public class Db {
 	public  void insertEvents(List<TClass> events) {
 		insertItems(events, SQLHelper.TABLE_EVENT);
 	}
+
+	private String getFilesString(ArrayList<EventFile> list) {
+		JSONArray array = new JSONArray();
+		try {
+			for (EventFile f : list) {
+				JSONObject obj = new JSONObject();
+				obj.put("id", f.id);
+				obj.put("n", f.name);
+				array.put(obj);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return array.toString();
+	}
 	
-	
+	private ArrayList<EventFile> parseFiles(String json) {
+		ArrayList<EventFile> ret = new ArrayList<EventFile>();
+		try {
+			JSONArray array = new JSONArray(json);
+			for(int i = 0; i < array.length(); i++) {
+				JSONObject obj = array.getJSONObject(i);
+				ret.add(new EventFile(obj.getString("n"), obj.getInt("id")));
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return ret;
+	}
 	
 	
 	private void insertItem(TClass cl, String table) {
 		ContentValues values = getContentValues(cl);
-		if (table.equals(SQLHelper.TABLE_EVENT)) values.put(SQLHelper.SCHOOL_COLUMN_ID, cl.getId());
+		if (table.equals(SQLHelper.TABLE_EVENT)) {
+			values.put(SQLHelper.SCHOOL_COLUMN_ID, cl.getId());
+			values.put(SQLHelper.EVENT_COLUMN_DESC, cl.getDesc());
+			values.put(SQLHelper.EVENT_COLUMN_FILES, getFilesString(cl.getFiles()));
+		}
 		open();
 		db.insert(table, null, values);
 		close();
@@ -135,17 +175,22 @@ public class Db {
 			do {
 				int id = cursor.getInt(0);
 				String name = cursor.getString(1),
-					   room = cursor.getString(2);
+					   desc = cursor.getString(2),
+					   room = cursor.getString(3);
 				
 				try {
-					Date newStart = sdf.parse(cursor.getString(3));
+					Date newStart = sdf.parse(cursor.getString(4));
 					start = newStart;
-					end = sdf.parse(cursor.getString(4));
+					end = sdf.parse(cursor.getString(5));
 				} catch (ParseException e) {
 					e.printStackTrace();
-				}	
+				}	;
+				ArrayList<EventFile> files = parseFiles(cursor.getString(8));
 				System.out.println("adding: "+name);
-				classes.add(new TClass(id, name, room, start, end, false, false, false));
+				TClass cl = new TClass(id, name, room, start, end, false, false, false);
+				cl.setDesc(desc);
+				cl.setFiles(files);
+				classes.add(cl);
 				
 			} while(cursor.moveToNext());
 			cursor.close();
@@ -203,5 +248,4 @@ public class Db {
 		close();
 		return classes;
 	}
-	
 }

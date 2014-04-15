@@ -2,6 +2,7 @@ package com.mv2studio.tswp.core;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -32,6 +33,7 @@ public class NotificationService extends Service {
 	
 	@Override
 	public void onCreate() {
+		System.out.println("STARTING SERVICE");
 		setAllAlarms();
 		super.onCreate();
 		stopSelf();
@@ -61,9 +63,10 @@ public class NotificationService extends Service {
 		intent.setAction(ALARM_TAG);
 		intent.putExtra(TCLASS_KEY, tClass);
 		PendingIntent pi = PendingIntent.getBroadcast(context, tClass.getId(), intent, 0);
-//		AlarmManager.INTERVAL_DAY * 7
-//		am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+1000, pi);
-		am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, pi);
+		
+		am.setRepeating(AlarmManager.RTC_WAKEUP, 
+				calendar.getTimeInMillis()-(Prefs.getIntValue(Prefs.TIME_TAG_INT, context)*60*1000), 
+				AlarmManager.INTERVAL_DAY * 7, pi);
 	}
 
 	

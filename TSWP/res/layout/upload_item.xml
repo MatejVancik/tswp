@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/upload_item_text"
+        android:singleLine="true"
+        android:ellipsize="end"
         android:textSize="18sp"
         android:layout_weight="1" />
     

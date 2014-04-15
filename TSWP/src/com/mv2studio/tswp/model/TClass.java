@@ -13,7 +13,7 @@ public class TClass implements Serializable {
 	private String name, desc, room;
 	private Date start, end;
 	private boolean notify, repeatWeekly, excercise, newDay;
-	private ArrayList<Integer> files = new ArrayList<Integer>();
+	private ArrayList<EventFile> files = new ArrayList<EventFile>();
 	
 	public enum State {
 		NUL, NEXT, RUN
@@ -50,12 +50,16 @@ public class TClass implements Serializable {
 		this.desc = desc;
 	}
 	
-	public void addFile(int i) {
+	public void addFile(EventFile i) {
 		files.add(i);
 	}
 	
-	public ArrayList<Integer> getFiles(){
+	public ArrayList<EventFile> getFiles(){
 		return files;
+	}
+	
+	public void setFiles(ArrayList<EventFile> files) {
+		this.files = files;
 	}
 
 	public boolean isWeekly() {

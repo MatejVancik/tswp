@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <PreferenceCategory
+        android:title="UPOZORNENIA" >
+    <EditTextPreference
+        android:defaultValue="60"
+        android:key="pref_time"
+        android:inputType="number"
+        android:summary="Koľko minút pred cvičením má telefón zobraziť upozornenie"
+        android:title="Čas upozornenia" />
+    
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_sound"
+        android:summary="Zapne alebo vypne zvukové oznámenie pri upozornení"
+        android:title="Zvuk upozornenia" />
+    
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_vib"
+        android:summary="Zapne alebo vypne vibrácie pri upozornení"
+        android:title="Vibrovanie" />
+    </PreferenceCategory>
+    
+    
+
+</PreferenceScreen>

@@ -1,34 +1,14 @@
 package com.mv2studio.tswp.ui;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,6 +31,8 @@ import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.mv2studio.tswp.R;
 import com.mv2studio.tswp.adapter.SpinnerAdapter;
+import com.mv2studio.tswp.communication.TeacherLoginTask;
+import com.mv2studio.tswp.communication.TeacherRegistrationTask;
 import com.mv2studio.tswp.core.MaisCalendarParser;
 import com.mv2studio.tswp.core.Prefs;
 import com.mv2studio.tswp.model.Department;
@@ -190,7 +172,14 @@ public class WizardFragment extends BaseFragment {
 					
 					// LOGIN OK
 					if (nameText.isEmpty() && surNameText.isEmpty()) {
-						new LoginTask().execute(emailText, passText);
+						new TeacherLoginTask(getActivity()) {
+							@Override
+							protected void onPostExecute(Void result) {
+								super.onPostExecute(result);
+								if(!error)
+									((MainActivity)context).replaceFragment(new TeacherMainFragment());
+							}
+						}.execute(emailText, passText);
 						
 						// ERROR. ENTER BOTH OR NONE
 					} else if (nameText.isEmpty() || surNameText.isEmpty()) {
@@ -198,7 +187,7 @@ public class WizardFragment extends BaseFragment {
 
 						// REGISTRATION
 					} else {
-						new RegistrationTask().execute(nameText, surNameText, emailText, passText);
+						new TeacherRegistrationTask(getActivity()).execute(nameText, surNameText, emailText, passText);
 					}
 					break;
 				}
@@ -213,6 +202,7 @@ public class WizardFragment extends BaseFragment {
 		mainStudent.setTypeface(tThin);
 		mainTeacher.setTypeface(tThin);
 		welcomeText.setTypeface(tCondBold);
+		teacherNext.setTypeface(tCondBold);
 
 		((MainActivity) context).setOnBackPressedListener(new OnBackPressedListener() {
 			@Override
@@ -253,7 +243,7 @@ public class WizardFragment extends BaseFragment {
 						Toast.makeText(context, "Welcome to TSWP", Toast.LENGTH_SHORT).show();
 						
 						Prefs.storeString(StudentEventFragment.YEAR_TAG, String.valueOf(year.getSelectedItemPosition()+1), context);
-						Prefs.storeString(StudentEventFragment.DEP_TAG, departmentsAdapter.getItem(dep.getSelectedItemPosition()).name, context);
+						Prefs.storeIntValue(StudentEventFragment.DEP_TAG, departmentsAdapter.getItem(dep.getSelectedItemPosition()).id, context);
 						Log.e("", "SAVING DEPARTMENT AS: "+departmentsAdapter.getItem(dep.getSelectedItemPosition()).name);
 						
 						
@@ -278,118 +268,6 @@ public class WizardFragment extends BaseFragment {
 		}
 
 	}
-	
-	
-	
-
-	
-	private class LoginTask extends AsyncTask<String, Void, Void>{
-
-		ProgressDialog pd;
-		boolean error = false;
-		
-		protected void onPreExecute() {
-			pd = new ProgressDialog(context);
-			pd.setTitle("Prihlásenie");
-			pd.setMessage("Skúšam sa prihlásiť");
-			pd.setCancelable(false);
-			pd.setIndeterminate(true);
-			pd.show();
-		};
-		
-		@Override
-		protected Void doInBackground(String... a) {
-			ArrayList<NameValuePair> pairs = new ArrayList<NameValuePair>();
-			pairs.add(new BasicNameValuePair("email", a[0]));
-			pairs.add(new BasicNameValuePair("hp", getHashedPassword(a[1])));
-			try {
-				HttpClient httpClient = new DefaultHttpClient();
-				HttpPost httpPost = new HttpPost("http://tswp.martinviszlai.com/login.php");
-				httpPost.setEntity(new UrlEncodedFormEntity(pairs));
-				HttpResponse response = httpClient.execute(httpPost);
-				
-				String token = EntityUtils.toString(response.getEntity());
-				error = token.length() != 32;
-				Log.e("", "Your token: "+token);
-				Prefs.storeString(TeacherMainFragment.TOKEN_TAG, token, context);
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			return null;
-		}
-		
-		protected void onPostExecute(Void result) {
-			pd.dismiss();
-			if(error) {
-				Toast.makeText(context, "Pri prihlásení nastala chyba", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			Prefs.storeBoolValue(MainActivity.P_LOGGED_KEY, true, context);
-			Prefs.storeBoolValue(MainActivity.P_TEACHER_KEY, true, context);
-			
-			((MainActivity)getActivity()).replaceFragment(new TeacherMainFragment());
-		}
-	};
-	
-	private class RegistrationTask extends AsyncTask<String, Void, Void> {
-		ProgressDialog pd;
-		String email, pass;
-		boolean error = false;
-		protected void onPreExecute() {
-			pd = new ProgressDialog(context);
-			pd.setTitle("Registrácia");
-			pd.setMessage("Snažím sa registrovať");
-			pd.setCancelable(false);
-			pd.setIndeterminate(true);
-			pd.show();
-		}
-		
-		@Override
-		protected Void doInBackground(String... a) {
-			ArrayList<NameValuePair> pairs = new ArrayList<NameValuePair>();
-			pairs.add(new BasicNameValuePair("first_name", a[0]));
-			pairs.add(new BasicNameValuePair("last_name", a[1]));
-			pairs.add(new BasicNameValuePair("email", a[2]));
-			pairs.add(new BasicNameValuePair("hp", getHashedPassword(a[3])));
-			email = a[2];
-			pass = a[3];
-			
-			try {
-				HttpClient httpClient = new DefaultHttpClient();
-				HttpPost httpPost = new HttpPost("http://tswp.martinviszlai.com/register.php");
-				httpPost.setEntity(new UrlEncodedFormEntity(pairs));
-				HttpResponse response = httpClient.execute(httpPost);
-				
-				String token = EntityUtils.toString(response.getEntity());
-				error = token.length() != 32;
-				Log.e("", "Your token: "+token);
-				Prefs.storeString(TeacherMainFragment.TOKEN_TAG, token, context);
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-		
-		protected void onPostExecute(Void result) {
-			if(error) {
-				pd.dismiss();
-				Toast.makeText(context, "Pri registrácii nastala chyba", Toast.LENGTH_SHORT).show();
-				return;
-			}
-			pd.dismiss();
-			new LoginTask().execute(email, pass);
-		}
-		
-	};
 
 	private void switchView(View oldView, View newView) {
 		final Animation anim_out = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
@@ -402,35 +280,5 @@ public class WizardFragment extends BaseFragment {
 		newView.setVisibility(View.VISIBLE);
 		newView.startAnimation(anim_in);
 	}
-	
-    private static String getHashedPassword(String password) {
-        MessageDigest md;
-        String ret = "";
-        try {
-            md = MessageDigest.getInstance("SHA-512");
-
-            md.update(password.getBytes());
-            byte[] mb = md.digest();
-            for (int i = 0; i < mb.length; i++) {
-                byte temp = mb[i];
-                String s = Integer.toHexString(new Byte(temp));
-                while (s.length() < 2) {
-                    s = "0" + s;
-                }
-                s = s.substring(s.length() - 2);
-                ret += s;
-            }
-            System.out.println(ret.length());
-            System.out.println("CRYPTO: " + ret);
-
-        } catch (NoSuchAlgorithmException e) {
-            System.out.println("ERROR: " + e.getMessage());
-            return null;
-        }
-        return ret;
-    }
-
-	
-
 	
 }

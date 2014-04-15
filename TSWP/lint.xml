@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
     <issue id="ValidFragment">
+        <ignore path="src/com/mv2studio/tswp/ui/SettingsActivity.java" />
         <ignore path="src/com/mv2studio/tswp/ui/TeacherMainFragment.java" />
     </issue>
 </lint>

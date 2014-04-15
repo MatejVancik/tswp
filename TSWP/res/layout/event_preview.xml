@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:padding="10dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp" >
+
+        <TextView
+            android:id="@+id/event_preview_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="MAGSA"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/event_preview_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="ÔLSLFKAJSDF SÔFAKLAKDSJFÔSADLKFKSDHÔALKFH SDFÔASDLJKSADÔLKFKJSADÔLFJADSSDF SÔDLLFKJSDFLKD SDFL KDSJF  JSDLKF SDKLFJ DSLDKFJ DSLKFJSD"
+            android:textColor="#888"
+            android:textSize="18sp" />
+
+        <TextView
+                android:id="@+id/event_preview_place_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Miesto a čas"
+                android:textColor="@color/HoloBlue"
+                android:textSize="18sp" />
+        
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="@color/HoloBlue" />
+
+        <TextView
+            android:id="@+id/event_preview_time"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/event_preview_room"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:id="@+id/event_preview_files_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/event_preview_attach_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Prílohy"
+                android:textColor="@color/HoloBlue"
+                android:textSize="18sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/HoloBlue" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

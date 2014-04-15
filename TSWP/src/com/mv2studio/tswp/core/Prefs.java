@@ -6,6 +6,11 @@ import android.content.SharedPreferences.Editor;
 
 public abstract class Prefs {
 	
+	public static final String  TIME_TAG = "pref_time",
+								TIME_TAG_INT = "pref_time_int",
+								VIB_TAG = "pref_vib",
+								SOUND_TAG = "pref_sound";
+	
 	public static boolean getBoolValue(String key, Context context) {
 		SharedPreferences prefs = getDataPrefs(context);
 		return prefs.getBoolean(key, false);
