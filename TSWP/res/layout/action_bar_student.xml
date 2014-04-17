@@ -26,10 +26,10 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="right|center_vertical"
-            android:layout_marginLeft="4dp"
             android:background="@drawable/imagebutton_selector"
             android:gravity="right|center_vertical"
             android:padding="6dp"
+            android:visibility="gone"
             android:scaleType="centerInside"
             android:src="@drawable/refresh" />
 
@@ -41,7 +41,7 @@
             android:background="@drawable/imagebutton_selector"
             android:padding="6dp"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_action_settings" />
+            android:src="@drawable/settings" />
     </LinearLayout>
     
 

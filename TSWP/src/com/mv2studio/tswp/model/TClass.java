@@ -8,7 +8,7 @@ import java.util.Date;
 public class TClass implements Serializable {
 
 	private static final long serialVersionUID = -8639004259345142397L;
-	private int id;
+	private int id, department, year;
 	private State state = State.NUL;
 	private String name, desc, room;
 	private Date start, end;
@@ -140,6 +140,22 @@ public class TClass implements Serializable {
 
 	public void setDesc(String desc) {
 		this.desc = desc;
+	}
+
+	public int getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(int department) {
+		this.department = department;
+	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
 	}
 
 }

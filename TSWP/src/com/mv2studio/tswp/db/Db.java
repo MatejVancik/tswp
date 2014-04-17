@@ -64,7 +64,7 @@ public class Db {
 		insertItems(items, SQLHelper.TABLE_SCHOOL);
 	}
 	
-	public  void insertEvents(List<TClass> events) {
+	public void insertEvents(List<TClass> events) {
 		insertItems(events, SQLHelper.TABLE_EVENT);
 	}
 

@@ -18,7 +18,7 @@ public class SpinnerAdapter extends ArrayAdapter {
 		super(c, resource);
 		
 	}
-	
+
 	public SpinnerAdapter(Context c, int resource, List objects) {
 		super(c, resource, objects);
 		tThin = Typeface.createFromAsset(c.getAssets(), "fonts/Roboto-Thin.ttf");

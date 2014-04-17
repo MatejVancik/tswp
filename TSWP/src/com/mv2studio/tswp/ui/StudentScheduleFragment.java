@@ -125,6 +125,7 @@ public class StudentScheduleFragment extends BaseFragment {
 				holder.t = (TextView) convertView.findViewById(R.id.class_item_text1);
 				holder.tt = (TextView) convertView.findViewById(R.id.class_item_text2);
 				holder.ttt = (TextView) convertView.findViewById(R.id.class_item_text3);
+				holder.type = (TextView) convertView.findViewById(R.id.class_item_class_type);
 				holder.image = (ImageView) convertView.findViewById(R.id.class_item_mark);
 				holder.line = convertView.findViewById(R.id.class_item_line);
 				holder.header = convertView.findViewById(R.id.class_item_day_header);
@@ -132,6 +133,7 @@ public class StudentScheduleFragment extends BaseFragment {
 				holder.t.setTypeface(tCond);
 				holder.tt.setTypeface(tCondBold);
 				holder.ttt.setTypeface(tCondBold);
+				holder.type.setTypeface(tCondLight);
 				holder.button = (ImageButton) convertView.findViewById(R.id.class_item_button);
 				convertView.setTag(holder);
 			} else {
@@ -157,7 +159,13 @@ public class StudentScheduleFragment extends BaseFragment {
 				@Override
 				public void onClick(View v) {
 					cl.setNotify(!cl.isNotify());
-					new Db(context).setNotifyOnClass(cl.getId(), cl.isNotify());
+					new Thread(
+						new Runnable() {
+							public void run() {
+								new Db(context).setNotifyOnClass(cl.getId(), cl.isNotify());
+							}
+					}).start();
+					
 					if (cl.isNotify()) {
 						v.setBackgroundResource(R.drawable.circle_green_selector);
 						((ImageButton) v).setImageResource(R.drawable.vv);
@@ -199,12 +207,13 @@ public class StudentScheduleFragment extends BaseFragment {
 			holder.t.setText(cl.getName());
 			holder.tt.setText(cl.getRoom());
 			holder.ttt.setText(sdf.format(cl.getStart()) + " - " + sdf.format(cl.getEnd()));
+			holder.type.setText(cl.isExcercise() ? "Cvičenie" : "Prednáška");
 
 			return convertView;
 		}
 
 		private class ViewHolder {
-			public TextView t, tt, ttt;
+			public TextView t, tt, ttt, type;
 			public ImageButton button;
 			public ImageView image;
 			public View line;

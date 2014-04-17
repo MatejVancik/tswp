@@ -11,7 +11,7 @@
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
         android:paddingTop="10dp"
-		android:dividerHeight="0dp"
+        android:divider="@android:color/transparent"
         android:paddingBottom="10dp"
         android:clipToPadding="false"
         android:layout_above="@+id/fragment_teacher_main_add_button" />

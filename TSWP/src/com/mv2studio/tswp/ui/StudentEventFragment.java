@@ -234,7 +234,13 @@ public class StudentEventFragment extends BaseFragment {
 				@Override
 				public void onClick(View v) {
 					cl.setNotify(!cl.isNotify());
-					new Db(context).setNotifyOnClass(cl.getId(), cl.isNotify());
+					new Thread(
+					new Runnable() {
+						public void run() {
+							new Db(context).setNotifyOnClass(cl.getId(), cl.isNotify());
+						}
+					}).start();
+					
 					if (cl.isNotify()) {
 						v.setBackgroundResource(R.drawable.circle_green_selector);
 						((ImageButton) v).setImageResource(R.drawable.vv);
@@ -320,6 +326,7 @@ public class StudentEventFragment extends BaseFragment {
 				TextView text = (TextView) fv.findViewById(R.id.upload_item_text);
 				text.setTypeface(tCond);
 				ImageButton but = (ImageButton) fv.findViewById(R.id.upload_item_remove);
+				but.setImageResource(R.drawable.download);
 				but.setBackgroundResource(R.drawable.circle_blue_selector);
 				text.setText(file.name);
 				but.setOnClickListener(new OnClickListener() {

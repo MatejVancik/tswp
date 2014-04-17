@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -176,8 +177,10 @@ public class WizardFragment extends BaseFragment {
 							@Override
 							protected void onPostExecute(Void result) {
 								super.onPostExecute(result);
-								if(!error)
+								if(!error) {
+									((MainActivity)context).setRrefreshVisibility(true);
 									((MainActivity)context).replaceFragment(new TeacherMainFragment());
+								}
 							}
 						}.execute(emailText, passText);
 						
@@ -231,36 +234,59 @@ public class WizardFragment extends BaseFragment {
 				final Uri uri = data.getData();
 
 				// Get the File path from the Uri
-				String path = FileUtils.getPath(getActivity(), uri);
+				final String path = FileUtils.getPath(getActivity(), uri);
 				String type = path.substring(path.length()-4, path.length()).toUpperCase();
 				System.out.println("TPYE: "+type);
 				if(!type.equals(".ICS")) {
 					Toast.makeText(context, "Súbor musí byť formátu .ICS", Toast.LENGTH_SHORT).show();
 				} else {
-					try {
-						MaisCalendarParser.parseCalendar(context, path);
+					
+					new AsyncTask<Void, Void, Boolean>() {
+
+						@Override
+						protected Boolean doInBackground(Void... params) {
+							try {
+								MaisCalendarParser.parseCalendar(context, path);
+								
+								Prefs.storeString(StudentEventFragment.YEAR_TAG, String.valueOf(year.getSelectedItemPosition()+1), context);
+								Prefs.storeIntValue(StudentEventFragment.DEP_TAG, departmentsAdapter.getItem(dep.getSelectedItemPosition()).id, context);
+								Log.e("", "SAVING DEPARTMENT AS: "+departmentsAdapter.getItem(dep.getSelectedItemPosition()).name);
+								
+								Prefs.storeBoolValue(MainActivity.P_LOGGED_KEY, true, context);
+								Prefs.storeString(MainActivity.P_USER_TYPE_KEY, MainActivity.P_STUDENT_KEY, context);
+								
+							} catch (NumberFormatException e) {
+								e.printStackTrace();
+								return false;
+							} catch (IOException e) {
+								e.printStackTrace();
+								return false;
+							}							
+							return true;
+						}
 						
-						Toast.makeText(context, "Welcome to TSWP", Toast.LENGTH_SHORT).show();
-						
-						Prefs.storeString(StudentEventFragment.YEAR_TAG, String.valueOf(year.getSelectedItemPosition()+1), context);
-						Prefs.storeIntValue(StudentEventFragment.DEP_TAG, departmentsAdapter.getItem(dep.getSelectedItemPosition()).id, context);
-						Log.e("", "SAVING DEPARTMENT AS: "+departmentsAdapter.getItem(dep.getSelectedItemPosition()).name);
-						
-						
-						Prefs.storeBoolValue(MainActivity.P_LOGGED_KEY, true, context);
-						Prefs.storeString(MainActivity.P_USER_TYPE_KEY, MainActivity.P_STUDENT_KEY, context);
-						
-						Intent i = new Intent(context, MainActivity.class);
-						i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-						startActivity(i);
-						
-					} catch (NumberFormatException e) {
-						Toast.makeText(context, "Pri čítaní rozvrhu nastala chyba", Toast.LENGTH_SHORT).show();
-						e.printStackTrace();
-					} catch (IOException e) {
-						Toast.makeText(context, "Pri čítaní rozvrhu nastala chyba", Toast.LENGTH_SHORT).show();
-						e.printStackTrace();
-					}
+						@Override
+						protected void onPostExecute(Boolean result) {
+							if(!result) {
+								Toast.makeText(context, "Pri čítaní rozvrhu nastala chyba", Toast.LENGTH_SHORT).show();
+								return;
+							}
+							studentMais.setBackgroundResource(R.drawable.button_selector_green);
+							studentMais.setText("Dokončiť");
+							studentMais.setOnClickListener(new OnClickListener() {
+								
+								@Override
+								public void onClick(View v) {
+									Intent i = new Intent(context, MainActivity.class);
+									i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+									startActivity(i);			
+									Toast.makeText(context, "Welcome to TSWP", Toast.LENGTH_SHORT).show();
+								}
+							});
+						}
+					}.execute();
+					
+					
 				}
 				
 			}

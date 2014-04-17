@@ -22,7 +22,7 @@ public class MainActivity extends FragmentActivity {
 	
 	protected Typeface tLight, tCond, tCondBold, tCondLight, tThin;
 	
-	private ImageButton refreshButton;
+	private ImageButton refreshButton, settingsButton;
 	
 	protected OnBackPressedListener onBackPressedListener;
 	protected OnRefreshClickListener onRefreshListener;
@@ -55,7 +55,8 @@ public class MainActivity extends FragmentActivity {
 			}
 		};
 		
-		barView.findViewById(R.id.action_bar_settings).setOnClickListener(actionBarClickListener);
+		settingsButton = (ImageButton) barView.findViewById(R.id.action_bar_settings);
+		settingsButton.setOnClickListener(actionBarClickListener);
 		refreshButton = (ImageButton) barView.findViewById(R.id.action_bar_refresh);
 		refreshButton.setOnClickListener(actionBarClickListener);
 	}
@@ -78,7 +79,9 @@ public class MainActivity extends FragmentActivity {
 		
 		// choose the right fragment
 		if(isLogged) {
+			refreshButton.setVisibility(View.VISIBLE);
 			if(isTeacher) {
+				settingsButton.setVisibility(View.GONE);
 				replaceFragment(new TeacherMainFragment());
 			} else {
 				findViewById(R.id.activity_main_student_layout).setVisibility(View.VISIBLE);
@@ -86,7 +89,7 @@ public class MainActivity extends FragmentActivity {
 				pager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
 				PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.student_tabs);
 				tabs.setViewPager(pager);
-				
+				setRefreshEnabled(false);
 				tabs.setOnPageChangeListener(new OnPageChangeListener() {
 					@Override
 					public void onPageSelected(int arg0) {
@@ -99,6 +102,8 @@ public class MainActivity extends FragmentActivity {
 			}
 			
 		} else {
+			settingsButton.setVisibility(View.GONE);
+			
 			replaceFragment(new WizardFragment());
 		}
 		
@@ -167,8 +172,13 @@ public class MainActivity extends FragmentActivity {
 		
 	}
 	
+	public void setRrefreshVisibility(boolean visible) {
+		refreshButton.setVisibility(visible ? View.VISIBLE : View.GONE);
+	}
+	
 	public void setRefreshEnabled(boolean enabled) {
 		refreshButton.setEnabled(enabled);
+		refreshButton.setAlpha(enabled ? 1f : 0.2f);
 	}
 	
 	public void setOnRefreshClickListener(OnRefreshClickListener listener) {

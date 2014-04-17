@@ -24,8 +24,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -33,6 +31,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -57,6 +57,7 @@ import com.mv2studio.tswp.model.Department;
 import com.mv2studio.tswp.model.EventFile;
 import com.mv2studio.tswp.model.Faculty;
 import com.mv2studio.tswp.model.TClass;
+import com.mv2studio.tswp.ui.MainActivity.OnRefreshClickListener;
 
 public class TeacherMainFragment extends BaseFragment {
 
@@ -95,6 +96,34 @@ public class TeacherMainFragment extends BaseFragment {
 		new TeacherLoginTask(context).execute();
 		new DownloadEventsTask().execute();
 		
+		final RotateAnimation rotate = new RotateAnimation(360, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+		rotate.setRepeatCount(Animation.INFINITE);
+		rotate.setInterpolator(getActivity(), android.R.anim.accelerate_decelerate_interpolator);
+		rotate.setDuration(1000);
+		
+		((MainActivity)getActivity()).setOnRefreshClickListener(new OnRefreshClickListener() {
+			@Override
+			public void onRefresh(final ImageButton button) {
+				new DownloadEventsTask() {
+					protected void onPreExecute() {
+						super.onPreExecute();
+						button.startAnimation(rotate);
+					}
+					
+					protected void onPostExecute(Void result) {
+						super.onPostExecute(result);
+						button.clearAnimation();
+					}
+					
+					protected void onCancelled() {
+						super.onCancelled();
+						button.clearAnimation();
+					}
+					
+				}.execute();
+			}
+		});
+		
 		return v;
 
 	}
@@ -110,8 +139,8 @@ public class TeacherMainFragment extends BaseFragment {
 		
 		@Override
 		protected Void doInBackground(Void... params) {
-			System.out.println("REQUEST FOR JSON TO: " + "http://tswp.martinviszlai.com/get_user_events.php?token=" + Prefs.getString(TOKEN_TAG, context));
-			String json = CommHelper.getHttpGetReponse("http://tswp.martinviszlai.com/get_user_events.php?token=" + Prefs.getString(TOKEN_TAG, context));
+			System.out.println("REQUEST FOR JSON TO: " + "http://tswp.martinviszlai.com/get_events.php?token=" + Prefs.getString(TOKEN_TAG, context));
+			String json = CommHelper.getHttpGetReponse("http://tswp.martinviszlai.com/get_events.php?token=" + Prefs.getString(TOKEN_TAG, context));
 			if(json == null) {
 				cancel(true);
 				return null;
@@ -126,11 +155,14 @@ public class TeacherMainFragment extends BaseFragment {
 				for (int i = 0; i < mainArray.length(); i++) {
 					JSONObject obj = mainArray.getJSONObject(i);
 					String title = obj.getString("title"), desc = obj.getString("desc"), room = obj.getString("place");
-					int id = obj.getInt("id");
+					int id = obj.getInt("id"), year = obj.getInt("year"), dep = obj.getInt("department");
 					Date start = timeF.parse(obj.getString("start_date")), end = timeF.parse(obj.getString("end_date"));
 					System.out.println("crateing task id: "+id);
 					TClass cl = new TClass(id, title, room, start, end, false, false, false);
 					cl.setDesc(desc);
+					cl.setDepartment(dep);
+					cl.setYear(year);
+					
 
 					JSONArray filesArray = obj.getJSONArray("files");
 					for (int j = 0; j < filesArray.length(); j++) {
@@ -264,7 +296,7 @@ public class TeacherMainFragment extends BaseFragment {
 		private TextView start, end, forPeople, title, attach;
 		private EditText name, desc, room;
 		private Button startTimeBut, startDateBut, endTimeBut, endDateBut, fileChooserBut, cancel, ok, delete;
-		private Spinner yearSpin, facSpin, DepSpin;
+		private Spinner yearSpin, facSpin, depSpin;
 
 		private Date startDate, endDate;
 		private TClass thisClass;
@@ -289,10 +321,10 @@ public class TeacherMainFragment extends BaseFragment {
 			startDate = new Date();
 			filesLayout = (LinearLayout) v.findViewById(R.id.class_edit_files_layout);
 
-			final ArrayList<Faculty> deps = Department.getDepartments(getActivity());
+			final ArrayList<Faculty> allFacts = Department.getDepartments(getActivity());
 
 			List<String> list = new ArrayList<String>();
-			for (Faculty dep : deps)
+			for (Faculty dep : allFacts)
 				list.add(dep.faculty);
 
 			yearSpin = (Spinner) v.findViewById(R.id.class_edit_student_year);
@@ -300,10 +332,10 @@ public class TeacherMainFragment extends BaseFragment {
 			final ArrayAdapter<String> yearAdapter = new SpinnerAdapter(context, android.R.layout.simple_spinner_item, years);
 			yearSpin.setAdapter(yearAdapter);
 
-			DepSpin = (Spinner) v.findViewById(R.id.class_edit_student_dep);
+			depSpin = (Spinner) v.findViewById(R.id.class_edit_student_dep);
 			final ArrayAdapter<Department> departmentsAdapter = new SpinnerAdapter(context, android.R.layout.simple_spinner_item, new ArrayList<Department>());
 
-			DepSpin.setAdapter(departmentsAdapter);
+			depSpin.setAdapter(departmentsAdapter);
 
 			facSpin = (Spinner) v.findViewById(R.id.class_edit_student_faculty);
 			ArrayAdapter<String> facultyAdapter = new SpinnerAdapter(context, android.R.layout.simple_spinner_item, list);
@@ -313,7 +345,7 @@ public class TeacherMainFragment extends BaseFragment {
 				@Override
 				public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 					List<Department> items = new ArrayList<Department>();
-					for (Faculty fac : deps)
+					for (Faculty fac : allFacts)
 						if (fac.faculty.equals(facSpin.getSelectedItem()))
 							items = fac.dep;
 					departmentsAdapter.clear();
@@ -348,7 +380,7 @@ public class TeacherMainFragment extends BaseFragment {
 
 							@Override
 							public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-								((Button) v).setText(dayOfMonth + "." + monthOfYear + "." + year);
+								((Button) v).setText(dayOfMonth + "." + (monthOfYear+1) + "." + year);
 								setDate(v.getId() == R.id.class_edit_end_date ? endDate : startDate, year, monthOfYear, dayOfMonth);
 							}
 						}.show(getFragmentManager(), "datePicker");
@@ -394,7 +426,7 @@ public class TeacherMainFragment extends BaseFragment {
 						TClass cl = new TClass(name.getText().toString(), desc.getText().toString(), room.getText().toString(), startDate, endDate, false,
 								false);
 
-						int id = ((Department) DepSpin.getSelectedItem()).id;
+						int id = ((Department) depSpin.getSelectedItem()).id;
 						int year = yearSpin.getSelectedItemPosition() + 1;
 						if(isEdit) {
 							new SendClassTask(thisClass.getId(), cl, files, filesToDelete, id, year).execute();
@@ -490,6 +522,17 @@ public class TeacherMainFragment extends BaseFragment {
 				current = thisClass.getEnd();
 				endTimeBut.setText(timeF.format(current));
 				endDateBut.setText(dateF.format(current));
+				
+				yearSpin.setSelection(thisClass.getYear()-1);
+				for(Faculty faculties: allFacts) {
+					for(Department d: faculties.dep) {
+						if(d.id == thisClass.getDepartment()) {
+							System.out.println("SAME DEPARTMENT: "+faculties.faculty+"   dep: "+d.id+"   pos:"+departmentsAdapter.getPosition(d)+"    facPos:"+facultyAdapter.getPosition(faculties.faculty));
+							facSpin.setSelection(facultyAdapter.getPosition(faculties.faculty));
+							depSpin.setSelection(departmentsAdapter.getPosition(d));
+						}
+					}
+				}
 				
 				filesToDelete = new ArrayList<Integer>();
 				

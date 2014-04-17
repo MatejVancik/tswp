@@ -67,4 +67,10 @@ public class Department {
 		return jsonString;
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if(o == null) return false;
+		return ((Department)o).id == this.id;
+	}
+	
 }
