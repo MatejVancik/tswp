@@ -15,7 +15,7 @@ import android.webkit.DownloadListener;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.mv2studio.tswp.R;
+import com.mv2studio.mynsa.R;
 
 public class WebFragment extends Fragment {
 

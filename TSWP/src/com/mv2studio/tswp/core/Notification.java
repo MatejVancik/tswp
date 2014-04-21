@@ -8,7 +8,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
-import com.mv2studio.tswp.R;
+import com.mv2studio.mynsa.R;
 import com.mv2studio.tswp.model.TClass;
 import com.mv2studio.tswp.ui.MainActivity;
 

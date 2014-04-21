@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/activity_main_content_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res/com.mv2studio.tswp">
+    android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res/com.mv2studio.mynsa">
 
     <LinearLayout
         android:id="@+id/activity_main_student_layout"

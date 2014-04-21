@@ -32,7 +32,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mv2studio.tswp.R;
+import com.mv2studio.mynsa.R;
 import com.mv2studio.tswp.communication.CommHelper;
 import com.mv2studio.tswp.core.Prefs;
 import com.mv2studio.tswp.db.Db;

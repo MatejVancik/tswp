@@ -30,7 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ipaulpro.afilechooser.utils.FileUtils;
-import com.mv2studio.tswp.R;
+import com.mv2studio.mynsa.R;
 import com.mv2studio.tswp.adapter.SpinnerAdapter;
 import com.mv2studio.tswp.communication.TeacherLoginTask;
 import com.mv2studio.tswp.communication.TeacherRegistrationTask;

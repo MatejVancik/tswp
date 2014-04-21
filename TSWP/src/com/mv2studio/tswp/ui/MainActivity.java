@@ -15,7 +15,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.mv2studio.tswp.R;
+import com.mv2studio.mynsa.R;
 import com.mv2studio.tswp.core.Prefs;
 
 public class MainActivity extends FragmentActivity {

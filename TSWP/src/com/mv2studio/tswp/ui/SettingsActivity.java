@@ -8,7 +8,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
-import com.mv2studio.tswp.R;
+import com.mv2studio.mynsa.R;
 import com.mv2studio.tswp.core.NotificationService;
 import com.mv2studio.tswp.core.Prefs;
 
