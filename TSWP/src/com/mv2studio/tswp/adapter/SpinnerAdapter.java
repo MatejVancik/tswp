@@ -26,7 +26,7 @@ public class SpinnerAdapter extends ArrayAdapter {
 		tLight = Typeface.createFromAsset(c.getAssets(), "fonts/Roboto-Light.ttf");
 		tCond = Typeface.createFromAsset(c.getAssets(), "fonts/Roboto-Condensed.ttf");
 		tCondBold = Typeface.createFromAsset(c.getAssets(), "fonts/Roboto-BoldCondensed.ttf");
-	}
+	} 
 
 	public TextView getView(int position, View convertView, ViewGroup parent) {
 		TextView v = (TextView) super.getView(position, convertView, parent);
