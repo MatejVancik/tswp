@@ -43,6 +43,6 @@ public class SpinnerAdapter extends ArrayAdapter {
 		v.setPadding(20, 15, 20, 15);
 		v.setText(getItem(position).toString());
 		return v;
-	}
+	} /*matej*/
 
 }
