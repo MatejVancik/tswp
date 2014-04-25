@@ -34,6 +34,9 @@ import android.widget.Toast;
 
 import com.mv2studio.mynsa.R;
 import com.mv2studio.tswp.communication.CommHelper;
+import com.mv2studio.tswp.communication.SuscribtionTask;
+import com.mv2studio.tswp.communication.TeacherRegistrationTask;
+import com.mv2studio.tswp.communication.URLs;
 import com.mv2studio.tswp.core.Prefs;
 import com.mv2studio.tswp.db.Db;
 import com.mv2studio.tswp.model.EventFile;
@@ -48,7 +51,8 @@ public class StudentEventFragment extends BaseFragment {
 	private ScheduleAdapter adapter;
 	
 	public static final String DEP_TAG = "STUDENT_DEPARTMENT", 
-			   				  YEAR_TAG = "STUDENT_YEAR";
+			   				  YEAR_TAG = "STUDENT_YEAR",
+							  ID_TAG = "student_id";
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -244,9 +248,11 @@ public class StudentEventFragment extends BaseFragment {
 					if (cl.isNotify()) {
 						v.setBackgroundResource(R.drawable.circle_green_selector);
 						((ImageButton) v).setImageResource(R.drawable.vv);
+						new SuscribtionTask(getActivity()).execute(URLs.suscribe,Prefs.getString(StudentEventFragment.ID_TAG, context), String.valueOf(cl.getId()));
 					} else {
 						v.setBackgroundResource(R.drawable.circle_red_selector);
 						((ImageButton) v).setImageResource(R.drawable.xx);
+						new SuscribtionTask(getActivity()).execute(URLs.unsuscribe,Prefs.getString(StudentEventFragment.ID_TAG, context), String.valueOf(cl.getId()));
 					}
 				}
 			});

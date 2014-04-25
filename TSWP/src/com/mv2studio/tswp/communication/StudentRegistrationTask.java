@@ -21,20 +21,19 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.mv2studio.tswp.core.Prefs;
+import com.mv2studio.tswp.ui.StudentEventFragment;
 import com.mv2studio.tswp.ui.TeacherMainFragment;
 import com.mv2studio.tswp.util.CommonUtils;
 
-public class TeacherRegistrationTask extends AsyncTask<String, Void, Void> {
+public class StudentRegistrationTask extends AsyncTask<String, Void, Void> {
 	ProgressDialog pd;
-	String email, pass, token;
 	boolean error = false;
 	Context context;
-	
-	public TeacherRegistrationTask(Context context) {
+
+	public StudentRegistrationTask(Context context) {
 		this.context = context;
 	}
-	
-	
+
 	protected void onPreExecute() {
 		pd = new ProgressDialog(context);
 		pd.setTitle("Registrácia");
@@ -43,27 +42,25 @@ public class TeacherRegistrationTask extends AsyncTask<String, Void, Void> {
 		pd.setIndeterminate(true);
 		pd.show();
 	}
-	
+
 	@Override
 	protected Void doInBackground(String... a) {
 		ArrayList<NameValuePair> pairs = new ArrayList<NameValuePair>();
-		pairs.add(new BasicNameValuePair("first_name", a[0]));
-		pairs.add(new BasicNameValuePair("last_name", a[1]));
-		pairs.add(new BasicNameValuePair("email", a[2]));
-		pairs.add(new BasicNameValuePair("hp", CommonUtils.getHashedString(a[3])));
-		email = a[2];
-		pass = a[3];
-		
+		// String[] parts = a[0].split("@");
+		// String name = parts[0].split(".")[0];
+		// String surname = parts[0].split(".")[1];
+
+		pairs.add(new BasicNameValuePair("email", a[0]));
+
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpPost httpPost = new HttpPost("http://tswp.martinviszlai.com/register.php");
+			HttpPost httpPost = new HttpPost("http://tswp.martinviszlai.com/register_student.php");
 			httpPost.setEntity(new UrlEncodedFormEntity(pairs));
 			HttpResponse response = httpClient.execute(httpPost);
-			
-			token = EntityUtils.toString(response.getEntity());
-			error = token.length() != 32;
-			Log.e("", "Your token: "+token);
-			Prefs.storeString(TeacherMainFragment.TOKEN_TAG, token, context);
+
+			String student_id = EntityUtils.toString(response.getEntity());
+			Log.e("", "Your ids: " + student_id);
+			Prefs.storeString(StudentEventFragment.ID_TAG, student_id, context);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (ClientProtocolException e) {
@@ -73,19 +70,13 @@ public class TeacherRegistrationTask extends AsyncTask<String, Void, Void> {
 		}
 		return null;
 	}
-	
+
 	protected void onPostExecute(Void result) {
-		if(error) {
+		if (error) {
 			pd.dismiss();
-			if (token.equals("1")){
-				Toast.makeText(context, "Email už je registrovaný", Toast.LENGTH_SHORT).show();
-			}else{
 			Toast.makeText(context, "Pri registrácii nastala chyba", Toast.LENGTH_SHORT).show();
-			}
 			return;
 		}
-		pd.dismiss();
-		new TeacherLoginTask(context).execute(email, pass);
 	}
-	
+
 }

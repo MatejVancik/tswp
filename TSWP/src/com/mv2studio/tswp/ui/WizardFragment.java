@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +34,7 @@ import android.widget.Toast;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 import com.mv2studio.mynsa.R;
 import com.mv2studio.tswp.adapter.SpinnerAdapter;
+import com.mv2studio.tswp.communication.StudentRegistrationTask;
 import com.mv2studio.tswp.communication.TeacherLoginTask;
 import com.mv2studio.tswp.communication.TeacherRegistrationTask;
 import com.mv2studio.tswp.core.MaisCalendarParser;
@@ -39,20 +42,20 @@ import com.mv2studio.tswp.core.Prefs;
 import com.mv2studio.tswp.model.Department;
 import com.mv2studio.tswp.model.Faculty;
 import com.mv2studio.tswp.ui.MainActivity.OnBackPressedListener;
+import com.mv2studio.tswp.util.CommonUtils;
 
 public class WizardFragment extends BaseFragment {
 
 	private Button mainStudent, mainTeacher, studentMais;
 	private Button teacherNext;
 	private Spinner faculty, year, dep;
-	private EditText email, pass, name, surname;
+	private EditText teacherEmail, studentEmail, pass, name, surname;
 	private LinearLayout mainLayout, studentLayout, teacherLayout;
-	private TextView welcomeText, sutdentTitle1, studentTitle2, teacherTitle1, teacherTitle2;
+	private TextView welcomeText, studentTitle1, studentTitle2, teacherTitle1, teacherTitle2;
 	private Context context;
 	private boolean isTeacher, maisLogged;
 	private int step = 0;
 	private ArrayAdapter<Department> departmentsAdapter;
-	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,7 +71,8 @@ public class WizardFragment extends BaseFragment {
 		faculty = (Spinner) l.findViewById(R.id.wizard_fragment_student_faculty);
 		year = (Spinner) l.findViewById(R.id.wizard_fragment_student_year);
 		dep = (Spinner) l.findViewById(R.id.wizard_fragment_student_dep);
-		email = (EditText) l.findViewById(R.id.wizard_fragment_teacher_email);
+		teacherEmail = (EditText) l.findViewById(R.id.wizard_fragment_teacher_email);
+		studentEmail = (EditText) l.findViewById(R.id.wizard_fragment_student_email);
 		pass = (EditText) l.findViewById(R.id.wizard_fragment_teacher_password);
 		name = (EditText) l.findViewById(R.id.wizard_fragment_teacher_name);
 		surname = (EditText) l.findViewById(R.id.wizard_fragment_teacher_surname);
@@ -76,11 +80,11 @@ public class WizardFragment extends BaseFragment {
 		studentLayout = (LinearLayout) l.findViewById(R.id.wizard_fragment_student_layout);
 		teacherLayout = (LinearLayout) l.findViewById(R.id.wizard_fragment_teacher_reg_layout);
 
-		sutdentTitle1 = (TextView) l.findViewById(R.id.wizard_fragment_student_layout_title);
+		studentTitle1 = (TextView) l.findViewById(R.id.wizard_fragment_student_layout_title);
 		studentTitle2 = (TextView) l.findViewById(R.id.wizard_fragment_student_layout_title2);
 		teacherTitle1 = (TextView) l.findViewById(R.id.wizard_fragment_teacher_layout_title);
 		teacherTitle2 = (TextView) l.findViewById(R.id.wizard_fragment_teacher_layout_title2);
-		sutdentTitle1.setTypeface(tThin);
+		studentTitle1.setTypeface(tThin);
 		studentTitle2.setTypeface(tThin);
 		teacherTitle1.setTypeface(tThin);
 		teacherTitle2.setTypeface(tThin);
@@ -89,8 +93,9 @@ public class WizardFragment extends BaseFragment {
 		name.setTypeface(tCondBold);
 		surname.setTypeface(tCondBold);
 		pass.setTypeface(tCondBold);
-		email.setTypeface(tCondBold);
-
+		teacherEmail.setTypeface(tCondBold);
+		studentEmail.setTypeface(tCondBold);
+		
 		// SPINERS
 		final ArrayList<Faculty> deps = Department.getDepartments(getActivity());
 
@@ -99,12 +104,19 @@ public class WizardFragment extends BaseFragment {
 			list.add(dep.faculty);
 
 		// departments
-		departmentsAdapter = new SpinnerAdapter(context, android.R.layout.simple_spinner_item, new ArrayList<Department>()); //new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, new ArrayList<String>());
+		departmentsAdapter = new SpinnerAdapter(context, android.R.layout.simple_spinner_item, new ArrayList<Department>()); // new
+																																// ArrayAdapter<String>(context,
+																																// android.R.layout.simple_spinner_item,
+																																// new
+																																// ArrayList<String>());
 		departmentsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		dep.setAdapter(departmentsAdapter);
 
 		// faculties
-		ArrayAdapter<String> facultyAdapter = new SpinnerAdapter(context, android.R.layout.simple_spinner_item, list);//new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, list);
+		ArrayAdapter<String> facultyAdapter = new SpinnerAdapter(context, android.R.layout.simple_spinner_item, list);// new
+																														// ArrayAdapter<String>(context,
+																														// android.R.layout.simple_spinner_item,
+																														// list);
 		facultyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		faculty.setAdapter(facultyAdapter);
 		faculty.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -112,8 +124,7 @@ public class WizardFragment extends BaseFragment {
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				List<Department> items = new ArrayList<Department>();
 				for (Faculty fac : deps)
-					if (fac.faculty.equals(faculty.getSelectedItem()))
-						items = fac.dep;
+					if (fac.faculty.equals(faculty.getSelectedItem())) items = fac.dep;
 				departmentsAdapter.clear();
 				departmentsAdapter.addAll(items);
 				departmentsAdapter.notifyDataSetChanged();
@@ -125,12 +136,11 @@ public class WizardFragment extends BaseFragment {
 				departmentsAdapter.notifyDataSetChanged();
 			}
 		});
-		
+
 		// years
-		List<CharSequence> years =  Arrays.asList(getResources().getTextArray(R.array.years));
+		List<CharSequence> years = Arrays.asList(getResources().getTextArray(R.array.years));
 		final ArrayAdapter<String> yearAdapter = new SpinnerAdapter(context, android.R.layout.simple_spinner_item, years);
 		year.setAdapter(yearAdapter);
-		
 
 		// WIZARD BUTTONS
 		OnClickListener buttonsListener = new OnClickListener() {
@@ -139,63 +149,67 @@ public class WizardFragment extends BaseFragment {
 				String text = null;
 
 				switch (v.getId()) {
-				case R.id.wizard_fragment_student_button:
-					step++;
-					isTeacher = false;
-					switchView(mainLayout, studentLayout);
-					break;
-				case R.id.wizard_fragment_teacher_button:
-					step++;
-					isTeacher = true;
-					switchView(mainLayout, teacherLayout);
-					break;
-				case R.id.wizard_fragment_student_mais:
-					Intent getContentIntent = FileUtils.createGetContentIntent();
+					case R.id.wizard_fragment_student_button:
+						step++;
+						isTeacher = false;
+						switchView(mainLayout, studentLayout);
+						break;
+					case R.id.wizard_fragment_teacher_button:
+						step++;
+						isTeacher = true;
+						switchView(mainLayout, teacherLayout);
+						break;
+					case R.id.wizard_fragment_student_mais:
+						String studentEmailText = studentEmail.getText().toString();
+						// ERROR. ONLY TUKE TEACHER
+						if (!studentEmailText.endsWith("@student.tuke.sk")) {
+							studentEmail.setError("Dostupné len pre emaily končiace '@student.tuke.sk'");
+						}
+						Intent getContentIntent = FileUtils.createGetContentIntent();
 
-					Intent intent = Intent.createChooser(getContentIntent, "Vyberte svoj rozvrh");
-					startActivityForResult(intent, 1234);					
-					break;
-				case R.id.wizard_fragment_teacher_next:
-					String nameText = name.getText().toString();
-					String surNameText = surname.getText().toString();
-					String emailText = email.getText().toString();
-					String passText = pass.getText().toString();
+						Intent intent = Intent.createChooser(getContentIntent, "Vyberte svoj rozvrh");
+						startActivityForResult(intent, 1234);
+						break;
+					case R.id.wizard_fragment_teacher_next:
+						String nameText = name.getText().toString();
+						String surNameText = surname.getText().toString();
+						String emailText = teacherEmail.getText().toString();
+						String passText = pass.getText().toString();
 
-					// EMAIL & PASS IS A MUST
-					if (emailText.isEmpty() || passText.isEmpty()) {
-						email.setError("Musíte zadať email aj heslo.");
-					} 
-					
-					// ERROR. ONLY TUKE TEACHER
-					if (!emailText.endsWith("@tuke.sk")) {
-						email.setError("Dostupné len pre emaily končiace '@tuke.sk'");
-					}
-					
-					// LOGIN OK
-					if (nameText.isEmpty() && surNameText.isEmpty()) {
-						new TeacherLoginTask(getActivity()) {
-							@Override
-							protected void onPostExecute(Void result) {
-								super.onPostExecute(result);
-								if(!error) {
-									((MainActivity)context).setRrefreshVisibility(true);
-									((MainActivity)context).replaceFragment(new TeacherMainFragment());
+						// EMAIL & PASS IS A MUST
+						if (emailText.isEmpty() || passText.isEmpty()) {
+							teacherEmail.setError("Musíte zadať email aj heslo.");
+						}
+
+						// ERROR. ONLY TUKE TEACHER
+						if (!emailText.endsWith("@tuke.sk")) {
+							teacherEmail.setError("Dostupné len pre emaily končiace '@tuke.sk'");
+						}
+
+						// LOGIN OK
+						if (nameText.isEmpty() && surNameText.isEmpty()) {
+							new TeacherLoginTask(getActivity()) {
+								@Override
+								protected void onPostExecute(Void result) {
+									super.onPostExecute(result);
+									if (!error) {
+										((MainActivity) context).setRrefreshVisibility(true);
+										((MainActivity) context).replaceFragment(new TeacherMainFragment());
+									}
 								}
-							}
-						}.execute(emailText, passText);
-						
-						// ERROR. ENTER BOTH OR NONE
-					} else if (nameText.isEmpty() || surNameText.isEmpty()) {
-						text = "Zadajte meno aj priezvisko, alebo ani jeden údaj";
+							}.execute(emailText, passText);
 
-						// REGISTRATION
-					} else {
-						new TeacherRegistrationTask(getActivity()).execute(nameText, surNameText, emailText, passText);
-					}
-					break;
+							// ERROR. ENTER BOTH OR NONE
+						} else if (nameText.isEmpty() || surNameText.isEmpty()) {
+							text = "Zadajte meno aj priezvisko, alebo ani jeden údaj";
+
+							// REGISTRATION
+						} else {
+							new TeacherRegistrationTask(getActivity()).execute(nameText, surNameText, emailText, passText);
+						}
+						break;
 				}
-				if (text != null)
-					Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+				if (text != null) Toast.makeText(context, text, Toast.LENGTH_LONG).show();
 			}
 		};
 		mainStudent.setOnClickListener(buttonsListener);
@@ -221,76 +235,78 @@ public class WizardFragment extends BaseFragment {
 
 		return l;
 	}
-	
-	
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		switch (requestCode) {
-		case 1234:
-			if (resultCode == Activity.RESULT_OK) {
+			case 1234:
+				if (resultCode == Activity.RESULT_OK) {
 
-				final Uri uri = data.getData();
+					final Uri uri = data.getData();
 
-				// Get the File path from the Uri
-				final String path = FileUtils.getPath(getActivity(), uri);
-				String type = path.substring(path.length()-4, path.length()).toUpperCase();
-				System.out.println("TPYE: "+type);
-				if(!type.equals(".ICS")) {
-					Toast.makeText(context, "Súbor musí byť formátu .ICS", Toast.LENGTH_SHORT).show();
-				} else {
-					
-					new AsyncTask<Void, Void, Boolean>() {
+					// Get the File path from the Uri
+					final String path = FileUtils.getPath(getActivity(), uri);
+					String type = path.substring(path.length() - 4, path.length()).toUpperCase();
+					System.out.println("TPYE: " + type);
+					if (!type.equals(".ICS")) {
+						Toast.makeText(context, "Súbor musí byť formátu .ICS", Toast.LENGTH_SHORT).show();
+					} else {
 
-						@Override
-						protected Boolean doInBackground(Void... params) {
-							try {
-								MaisCalendarParser.parseCalendar(context, path);
-								
-								Prefs.storeString(StudentEventFragment.YEAR_TAG, String.valueOf(year.getSelectedItemPosition()+1), context);
-								Prefs.storeIntValue(StudentEventFragment.DEP_TAG, departmentsAdapter.getItem(dep.getSelectedItemPosition()).id, context);
-								Log.e("", "SAVING DEPARTMENT AS: "+departmentsAdapter.getItem(dep.getSelectedItemPosition()).name);
-								
-								Prefs.storeBoolValue(MainActivity.P_LOGGED_KEY, true, context);
-								Prefs.storeString(MainActivity.P_USER_TYPE_KEY, MainActivity.P_STUDENT_KEY, context);
-								
-							} catch (NumberFormatException e) {
-								e.printStackTrace();
-								return false;
-							} catch (IOException e) {
-								e.printStackTrace();
-								return false;
-							}							
-							return true;
-						}
-						
-						@Override
-						protected void onPostExecute(Boolean result) {
-							if(!result) {
-								Toast.makeText(context, "Pri čítaní rozvrhu nastala chyba", Toast.LENGTH_SHORT).show();
-								return;
-							}
-							studentMais.setBackgroundResource(R.drawable.button_selector_green);
-							studentMais.setText("Dokončiť");
-							studentMais.setOnClickListener(new OnClickListener() {
-								
-								@Override
-								public void onClick(View v) {
-									Intent i = new Intent(context, MainActivity.class);
-									i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-									startActivity(i);			
-									Toast.makeText(context, "Welcome to TSWP", Toast.LENGTH_SHORT).show();
+						new AsyncTask<Void, Void, Boolean>() {
+
+							@Override
+							protected Boolean doInBackground(Void... params) {
+								try {
+									MaisCalendarParser.parseCalendar(context, path);
+
+									Prefs.storeString(StudentEventFragment.YEAR_TAG, String.valueOf(year.getSelectedItemPosition() + 1), context);
+									Prefs.storeIntValue(StudentEventFragment.DEP_TAG, departmentsAdapter.getItem(dep.getSelectedItemPosition()).id, context);
+									Log.e("", "SAVING DEPARTMENT AS: " + departmentsAdapter.getItem(dep.getSelectedItemPosition()).name);
+
+									Prefs.storeBoolValue(MainActivity.P_LOGGED_KEY, true, context);
+									Prefs.storeString(MainActivity.P_USER_TYPE_KEY, MainActivity.P_STUDENT_KEY, context);
+
+								} catch (NumberFormatException e) {
+									e.printStackTrace();
+									return false;
+								} catch (IOException e) {
+									e.printStackTrace();
+									return false;
 								}
-							});
-						}
-					}.execute();
-					
-					
+								return true;
+							}
+
+							@Override
+							protected void onPostExecute(Boolean result) {
+								if (!result) {
+									Toast.makeText(context, "Pri čítaní rozvrhu nastala chyba", Toast.LENGTH_SHORT).show();
+									return;
+								}
+								studentMais.setBackgroundResource(R.drawable.button_selector_green);
+							
+								studentMais.setText("Dokončiť");
+								studentMais.setOnClickListener(new OnClickListener() {
+
+									@Override
+									public void onClick(View v) {
+										if (studentEmail.getError() == null){
+										new StudentRegistrationTask(getActivity()).execute(studentEmail.getText().toString());
+										Intent i = new Intent(context, MainActivity.class);
+										i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+										startActivity(i);
+										Toast.makeText(context, "Welcome to TSWP", Toast.LENGTH_SHORT).show();
+										}
+									}
+								});
+							}
+						}.execute();
+
+					}
+
 				}
-				
-			}
-			break;
+				break;
 		}
 
 	}
@@ -306,5 +322,5 @@ public class WizardFragment extends BaseFragment {
 		newView.setVisibility(View.VISIBLE);
 		newView.startAnimation(anim_in);
 	}
-	
+
 }

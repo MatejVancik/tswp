@@ -2,6 +2,7 @@ package com.mv2studio.tswp.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.Normalizer;
 
 public abstract class CommonUtils {
 
@@ -37,4 +38,14 @@ public abstract class CommonUtils {
         return ret;
     }
 	
+	/**
+	 * remove accents from string. For example "čšť" transforms to "cst"
+	 * @param string string with accents
+	 * @return string without accents
+	 */
+	public static String removeAccents(String string){
+		string = Normalizer.normalize(string, Normalizer.Form.NFD);
+		string = string.replaceAll("[^\\p{ASCII}]", "");
+		return string;
+	}
 }
