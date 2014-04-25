@@ -41,6 +41,9 @@ import android.widget.Toast;
 import com.mv2studio.tswp.core.Prefs;
 import com.mv2studio.tswp.ui.TeacherMainFragment;
 
+/**
+ * helper to communicate with server. Handle POST and GET requests and responses.
+ */
 public class CommHelper {
 
 	/**
@@ -152,7 +155,7 @@ public class CommHelper {
             HttpClient httpclient = new DefaultHttpClient();
             httpclient.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
 
-            HttpPost httppost = new HttpPost("http://tswp.martinviszlai.com/upload.php?token="+Prefs.getString(TeacherMainFragment.TOKEN_TAG, context)+"&event="+eventID);
+            HttpPost httppost = new HttpPost(URLs.fileUpload+"?token="+Prefs.getString(TeacherMainFragment.TOKEN_TAG, context)+"&event="+eventID);
             File file = new File(path);
             MultipartEntity mpEntity = new MultipartEntity();
             ContentBody cbFile = new FileBody(file);
@@ -207,7 +210,7 @@ public class CommHelper {
     		protected Void doInBackground(Void... param) {
     		    int count;
     		    try {
-    		        URL url = new URL("http://tswp.martinviszlai.com/uploadw.php?file="+id);
+    		        URL url = new URL(URLs.fileDownload+"?file="+id);
     		        System.out.println("url: "+url);
     		        URLConnection conexion = url.openConnection();
     		        conexion.connect();

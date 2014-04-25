@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * class from timetable or event. Contains all information about class as room, time, ...
+ *
+ */
 public class TClass implements Serializable {
 
 	private static final long serialVersionUID = -8639004259345142397L;
@@ -12,9 +16,16 @@ public class TClass implements Serializable {
 	private State state = State.NUL;
 	private String name, desc, room;
 	private Date start, end;
-	private boolean notify, repeatWeekly, excercise, newDay;
+	private boolean notify, repeatWeekly, excercise;
+	private boolean newDay; // if need to create banner for new day in week
 	private ArrayList<EventFile> files = new ArrayList<EventFile>();
 	
+	/**
+	 * state of class. 
+	 * NUL state is shown gray. Default state is NUL.
+	 * NEXT state is shown orange. When no other class is in progress, the next class in schedule is in state NEXT.
+	 * RUN state is shown green. Only currently running class is in state RUN
+	 */
 	public enum State {
 		NUL, NEXT, RUN
 	}
@@ -42,6 +53,7 @@ public class TClass implements Serializable {
 		long diff = endDay.getTimeInMillis() - startDay.getTimeInMillis();
 		long days = diff / (24 * 60 * 60 * 1000);
 
+		// if lasts longer than week, it is set as scheduled weekly
 		repeatWeekly = days > 7;
 	}
 	

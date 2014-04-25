@@ -5,6 +5,11 @@ import java.security.NoSuchAlgorithmException;
 
 public abstract class CommonUtils {
 
+	/**
+	 * hash the password, to send it in secure form
+	 * @param password pass in raw form
+	 * @return password in hashed form
+	 */
 	public static String getHashedString(String password) {
         MessageDigest md;
         String ret = "";

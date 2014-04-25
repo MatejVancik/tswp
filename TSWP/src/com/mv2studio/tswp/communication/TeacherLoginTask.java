@@ -90,7 +90,7 @@ public class TeacherLoginTask extends AsyncTask<String, Void, Void>{
 		Prefs.storeBoolValue(MainActivity.P_LOGGED_KEY, true, context);
 		Prefs.storeBoolValue(MainActivity.P_TEACHER_KEY, true, context);
 		
-		// store email and pass on successfull login
+		// store email and pass on successful login
 		Prefs.storeString(TeacherMainFragment.USER_NAME_TAG, emailText, context);
 		Prefs.storeString(TeacherMainFragment.USER_PASS_TAG, passText, context);
 		

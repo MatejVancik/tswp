@@ -12,6 +12,9 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+/**
+ * represent depatrment. Static methods load departments from assets file.
+ */
 public class Department {
 	public String name;
 	public int id;

@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
+/**
+ * application preferences. User can set notifications (time, vibrations, sound)
+ */
 public abstract class Prefs {
 	
 	public static final String  TIME_TAG = "pref_time",
