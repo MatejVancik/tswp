@@ -7,5 +7,6 @@ public class URLs {
 	public static final String fileDownload = baseUrl+"/uploadw.php";
 	public static final String suscribe = baseUrl+"/add_subscription.php";
 	public static final String unsuscribe = baseUrl+"/remove_subscription.php";
+	public static final String get_subscriptions = baseUrl+"/get_subscriptions.php";
 	
 }

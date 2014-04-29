@@ -1,5 +1,7 @@
 package com.mv2studio.tswp.ui;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,6 +10,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,9 +42,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -52,6 +65,7 @@ import com.mv2studio.mynsa.R;
 import com.mv2studio.tswp.adapter.SpinnerAdapter;
 import com.mv2studio.tswp.communication.CommHelper;
 import com.mv2studio.tswp.communication.TeacherLoginTask;
+import com.mv2studio.tswp.communication.URLs;
 import com.mv2studio.tswp.core.Prefs;
 import com.mv2studio.tswp.model.Department;
 import com.mv2studio.tswp.model.EventFile;
@@ -64,9 +78,7 @@ public class TeacherMainFragment extends BaseFragment {
 	private Context context;
 	private static String IS_EDIT = "edit";
 	static String CLASS_TAG = "class";
-	public static final String TOKEN_TAG = "token",
-							   USER_NAME_TAG = "name",
-							   USER_PASS_TAG = "pass";
+	public static final String TOKEN_TAG = "token", USER_NAME_TAG = "name", USER_PASS_TAG = "pass";
 	private String timeFormat = "HH:mm";
 	private String dateFormat = "dd.MMM.yyyy";
 	private TeacherScheduleAdapter adapter;
@@ -89,19 +101,31 @@ public class TeacherMainFragment extends BaseFragment {
 				dialog.show(getFragmentManager(), "dialog");
 			}
 		});
-		ListView list = (ListView) v.findViewById(R.id.fragment_teacher_main_list);
+		ListView attachmentList = (ListView) v.findViewById(R.id.fragment_teacher_main_list);
 		adapter = new TeacherScheduleAdapter(context, 0, new ArrayList<TClass>());
-		list.setAdapter(adapter);
+		attachmentList.setAdapter(adapter);
+		attachmentList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				System.out.println("event clicked");
+				Bundle b = new Bundle();
+				b.putSerializable(TeacherMainFragment.CLASS_TAG, adapter.getItem(position));
+				EventPreviewDialog dialog = new EventPreviewDialog();
+				dialog.setArguments(b);
+				dialog.show(getFragmentManager(), "dialog");
+			}
+		});
 		loadingView = v.findViewById(R.id.fragment_teacher_loading);
 		new TeacherLoginTask(context).execute();
 		new DownloadEventsTask().execute();
-		
+
 		final RotateAnimation rotate = new RotateAnimation(360, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
 		rotate.setRepeatCount(Animation.INFINITE);
 		rotate.setInterpolator(getActivity(), android.R.anim.accelerate_decelerate_interpolator);
 		rotate.setDuration(1000);
-		
-		((MainActivity)getActivity()).setOnRefreshClickListener(new OnRefreshClickListener() {
+
+		((MainActivity) getActivity()).setOnRefreshClickListener(new OnRefreshClickListener() {
 			@Override
 			public void onRefresh(final ImageButton button) {
 				new DownloadEventsTask() {
@@ -109,39 +133,39 @@ public class TeacherMainFragment extends BaseFragment {
 						super.onPreExecute();
 						button.startAnimation(rotate);
 					}
-					
+
 					protected void onPostExecute(Void result) {
 						super.onPostExecute(result);
 						button.clearAnimation();
 					}
-					
+
 					protected void onCancelled() {
 						super.onCancelled();
 						button.clearAnimation();
 					}
-					
+
 				}.execute();
 			}
 		});
-		
+
 		return v;
 
 	}
 
 	private class DownloadEventsTask extends AsyncTask<Void, Void, Void> {
-		
+
 		ArrayList<TClass> classes = new ArrayList<TClass>();
 
 		@Override
 		protected void onPreExecute() {
 			loadingView.setVisibility(View.VISIBLE);
 		}
-		
+
 		@Override
 		protected Void doInBackground(Void... params) {
 			System.out.println("REQUEST FOR JSON TO: " + "http://tswp.martinviszlai.com/get_events.php?token=" + Prefs.getString(TOKEN_TAG, context));
 			String json = CommHelper.getHttpGetReponse("http://tswp.martinviszlai.com/get_events.php?token=" + Prefs.getString(TOKEN_TAG, context));
-			if(json == null) {
+			if (json == null) {
 				cancel(true);
 				return null;
 			}
@@ -157,12 +181,11 @@ public class TeacherMainFragment extends BaseFragment {
 					String title = obj.getString("title"), desc = obj.getString("desc"), room = obj.getString("place");
 					int id = obj.getInt("id"), year = obj.getInt("year"), dep = obj.getInt("department");
 					Date start = timeF.parse(obj.getString("start_date")), end = timeF.parse(obj.getString("end_date"));
-					System.out.println("crateing task id: "+id);
+					System.out.println("creating task id: " + id);
 					TClass cl = new TClass(id, title, room, start, end, false, false, false);
 					cl.setDesc(desc);
 					cl.setDepartment(dep);
 					cl.setYear(year);
-					
 
 					JSONArray filesArray = obj.getJSONArray("files");
 					for (int j = 0; j < filesArray.length(); j++) {
@@ -192,6 +215,58 @@ public class TeacherMainFragment extends BaseFragment {
 			adapter.addAll(classes);
 			adapter.notifyDataSetChanged();
 			loadingView.setVisibility(View.GONE);
+		}
+
+	}
+
+	private class DownloadStudentsTask extends AsyncTask<String, Void, Void> {
+
+		ArrayList<String> students = new ArrayList<String>();
+
+		@Override
+		protected void onPreExecute() {
+		}
+
+		@Override
+		protected Void doInBackground(String... params) {
+			System.out.println("REQUEST FOR JSON TO: " + URLs.get_subscriptions + "?token=" + Prefs.getString(TOKEN_TAG, context) + "\n with event_id: " + params[0]);
+			ArrayList<NameValuePair> pairs = new ArrayList<NameValuePair>();
+			pairs.add(new BasicNameValuePair("event_id", params[0]));
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpPost httpPost = new HttpPost(URLs.get_subscriptions + "?token=" + Prefs.getString(TOKEN_TAG, context));
+			String json = null;
+			try {
+				httpPost.setEntity(new UrlEncodedFormEntity(pairs));
+				HttpResponse response = httpClient.execute(httpPost);
+				json = EntityUtils.toString(response.getEntity());
+			} catch (UnsupportedEncodingException e1) {
+				e1.printStackTrace();
+			} catch (ClientProtocolException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			if (json == null) {
+				cancel(true);
+				return null;
+			}
+			System.out.println("JSON FROM SERVER: " + json);
+
+			try {
+				JSONArray array = new JSONArray(json);
+
+				for (int i = 0; i < array.length(); i++) {
+					students.add(array.getString(i));
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+
+		protected void onPostExecute(Void result) {
+			// TODO zobrazit studentov
 		}
 
 	}
@@ -226,38 +301,22 @@ public class TeacherMainFragment extends BaseFragment {
 				holder.title.setTypeface(tCond);
 				holder.desc.setTypeface(tCondBold);
 				holder.room.setTypeface(tCondBold);
-				holder.button = (ImageButton) convertView.findViewById(R.id.event_item_button);
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
 			}
 
-			holder.button.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					Bundle b = new Bundle();
-					b.putBoolean(IS_EDIT, true);
-					b.putSerializable(CLASS_TAG, cl);
-					EditorDialog dialog = new EditorDialog();
-					dialog.setArguments(b);
-					dialog.show(getFragmentManager(), "dialog");
-				}
-			});
-
 			holder.title.setText(cl.getName());
 			holder.desc.setText(cl.getDesc());
 			holder.room.setText(cl.getRoom());
-			holder.attach.setText("Počet príloh: "+cl.getFiles().size());
+			holder.attach.setText("Počet príloh: " + cl.getFiles().size());
 			holder.date.setText(sdf.format(cl.getStart()) + " - " + sdf.format(cl.getEnd()));
-			
-			
+
 			return convertView;
 		}
 
 		private class ViewHolder {
 			public TextView title, desc, room, date, attach;
-			public ImageButton button;
 		}
 
 	}
@@ -346,8 +405,7 @@ public class TeacherMainFragment extends BaseFragment {
 				public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 					List<Department> items = new ArrayList<Department>();
 					for (Faculty fac : allFacts)
-						if (fac.faculty.equals(facSpin.getSelectedItem()))
-							items = fac.dep;
+						if (fac.faculty.equals(facSpin.getSelectedItem())) items = fac.dep;
 					departmentsAdapter.clear();
 					departmentsAdapter.addAll(items);
 					departmentsAdapter.notifyDataSetChanged();
@@ -380,7 +438,7 @@ public class TeacherMainFragment extends BaseFragment {
 
 							@Override
 							public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-								((Button) v).setText(dayOfMonth + "." + (monthOfYear+1) + "." + year);
+								((Button) v).setText(dayOfMonth + "." + (monthOfYear + 1) + "." + year);
 								setDate(v.getId() == R.id.class_edit_end_date ? endDate : startDate, year, monthOfYear, dayOfMonth);
 							}
 						}.show(getFragmentManager(), "datePicker");
@@ -394,55 +452,51 @@ public class TeacherMainFragment extends BaseFragment {
 				@Override
 				public void onClick(View v) {
 					switch (v.getId()) {
-					case R.id.class_edit_delete:
-						new AlertDialog.Builder(context).setMessage("Naozaj chcete vymazať udalosť\n "+thisClass.getName()+"?")
-						.setNegativeButton("Nie", null)
-						.setPositiveButton("Áno", new DialogInterface.OnClickListener() {
-							
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								new Thread(
-										new Runnable() {
-											
-											@Override
-											public void run() {
-												System.out.println("Zmazane eventy: "+CommHelper.getHttpPostResponse("http://tswp.martinviszlai.com/delete_event.php?token="+Prefs.getString(TOKEN_TAG, context), 
-														new String[][] {{"event_id", thisClass.getId()+""}}));
-												EditorDialog.this.dismiss();
-											}
-										}).start();
-								
+						case R.id.class_edit_delete:
+							new AlertDialog.Builder(context).setMessage("Naozaj chcete vymazať udalosť\n " + thisClass.getName() + "?").setNegativeButton("Nie", null)
+									.setPositiveButton("Áno", new DialogInterface.OnClickListener() {
+
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											new Thread(new Runnable() {
+
+												@Override
+												public void run() {
+													System.out.println("Zmazane eventy: "
+															+ CommHelper.getHttpPostResponse("http://tswp.martinviszlai.com/delete_event.php?token=" + Prefs.getString(TOKEN_TAG, context),
+																	new String[][] { { "event_id", thisClass.getId() + "" } }));
+													EditorDialog.this.dismiss();
+												}
+											}).start();
+
+										}
+									}).show();
+
+							break;
+						case R.id.class_edit_ok:
+							if (name.getText().toString().isEmpty()) name.setError("Musíte zadať názov udalosti");
+							if (desc.getText().toString().isEmpty()) desc.setError("Musíte zadať popis udalosti");
+
+							// send to server, notify adapter
+							TClass cl = new TClass(name.getText().toString(), desc.getText().toString(), room.getText().toString(), startDate, endDate, false, false);
+
+							int id = ((Department) depSpin.getSelectedItem()).id;
+							int year = yearSpin.getSelectedItemPosition() + 1;
+							if (isEdit) {
+								new SendClassTask(thisClass.getId(), cl, files, filesToDelete, id, year).execute();
+							} else {
+								new SendClassTask(cl, files, id, year).execute();
 							}
-						}).show();
-						
-						break;
-					case R.id.class_edit_ok:
-						if (name.getText().toString().isEmpty())
-							name.setError("Musíte zadať názov udalosti");
-						if (desc.getText().toString().isEmpty())
-							desc.setError("Musíte zadať popis udalosti");
+							new DownloadEventsTask().execute();
+						case R.id.class_edit_cancel:
+							EditorDialog.this.dismiss();
+							break;
+						case R.id.class_edit_choose_file:
+							Intent getContentIntent = FileUtils.createGetContentIntent();
 
-						// send to server, notify adapter
-						TClass cl = new TClass(name.getText().toString(), desc.getText().toString(), room.getText().toString(), startDate, endDate, false,
-								false);
-
-						int id = ((Department) depSpin.getSelectedItem()).id;
-						int year = yearSpin.getSelectedItemPosition() + 1;
-						if(isEdit) {
-							new SendClassTask(thisClass.getId(), cl, files, filesToDelete, id, year).execute();
-						} else {
-							new SendClassTask(cl, files, id, year).execute();
-						}
-						new DownloadEventsTask().execute();
-					case R.id.class_edit_cancel:
-						EditorDialog.this.dismiss();
-						break;
-					case R.id.class_edit_choose_file:
-						Intent getContentIntent = FileUtils.createGetContentIntent();
-
-						Intent intent = Intent.createChooser(getContentIntent, "Select a file");
-						startActivityForResult(intent, 1234);
-						break;
+							Intent intent = Intent.createChooser(getContentIntent, "Select a file");
+							startActivityForResult(intent, 1234);
+							break;
 					}
 
 				}
@@ -456,7 +510,6 @@ public class TeacherMainFragment extends BaseFragment {
 			ok.setTypeface(tCondBold);
 			cancel.setTypeface(tCondBold);
 			delete.setTypeface(tCondBold);
-			
 
 			title = (TextView) v.findViewById(R.id.class_edit_title);
 			start = (TextView) v.findViewById(R.id.class_edit_start_title);
@@ -512,7 +565,7 @@ public class TeacherMainFragment extends BaseFragment {
 			if (isEdit) {
 				v.findViewById(R.id.class_edit_delete_layout).setVisibility(View.VISIBLE);
 				name.setText(thisClass.getName());
-				desc.setText(thisClass.getRoom());
+				desc.setText(thisClass.getDesc());
 				room.setText(thisClass.getRoom());
 
 				current = thisClass.getStart();
@@ -522,21 +575,22 @@ public class TeacherMainFragment extends BaseFragment {
 				current = thisClass.getEnd();
 				endTimeBut.setText(timeF.format(current));
 				endDateBut.setText(dateF.format(current));
-				
-				yearSpin.setSelection(thisClass.getYear()-1);
-				for(Faculty faculties: allFacts) {
-					for(Department d: faculties.dep) {
-						if(d.id == thisClass.getDepartment()) {
-							System.out.println("SAME DEPARTMENT: "+faculties.faculty+"   dep: "+d.id+"   pos:"+departmentsAdapter.getPosition(d)+"    facPos:"+facultyAdapter.getPosition(faculties.faculty));
+
+				yearSpin.setSelection(thisClass.getYear() - 1);
+				for (Faculty faculties : allFacts) {
+					for (Department d : faculties.dep) {
+						if (d.id == thisClass.getDepartment()) {
+							System.out.println("SAME DEPARTMENT: " + faculties.faculty + "   dep: " + d.id + "   pos:" + departmentsAdapter.getPosition(d) + "    facPos:"
+									+ facultyAdapter.getPosition(faculties.faculty));
 							facSpin.setSelection(facultyAdapter.getPosition(faculties.faculty));
 							depSpin.setSelection(departmentsAdapter.getPosition(d));
 						}
 					}
 				}
-				
+
 				filesToDelete = new ArrayList<Integer>();
-				
-				for(final EventFile file: thisClass.getFiles()) {
+
+				for (final EventFile file : thisClass.getFiles()) {
 					final View fv = inflater.inflate(R.layout.upload_item, null);
 					TextView text = (TextView) fv.findViewById(R.id.upload_item_text);
 					text.setTypeface(tCond);
@@ -553,7 +607,7 @@ public class TeacherMainFragment extends BaseFragment {
 					});
 					filesLayout.addView(fv);
 				}
-				
+
 			}
 
 			return v;
@@ -564,25 +618,25 @@ public class TeacherMainFragment extends BaseFragment {
 			super.onActivityResult(requestCode, resultCode, data);
 
 			switch (requestCode) {
-			case 1234:
-				if (resultCode == Activity.RESULT_OK) {
+				case 1234:
+					if (resultCode == Activity.RESULT_OK) {
 
-					final Uri uri = data.getData();
+						final Uri uri = data.getData();
 
-					// Get the File path from the Uri
-					String path = FileUtils.getPath(getActivity(), uri);
-					final UploadFileHolder f = new UploadFileHolder(path, context);
-					f.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							files.remove(f);
-							filesLayout.removeView(f.getView());
-						}
-					});
-					files.add(f);
-					filesLayout.addView(f.getView());
-				}
-				break;
+						// Get the File path from the Uri
+						String path = FileUtils.getPath(getActivity(), uri);
+						final UploadFileHolder f = new UploadFileHolder(path, context);
+						f.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								files.remove(f);
+								filesLayout.removeView(f.getView());
+							}
+						});
+						files.add(f);
+						filesLayout.addView(f.getView());
+					}
+					break;
 			}
 
 		}
@@ -593,10 +647,8 @@ public class TeacherMainFragment extends BaseFragment {
 			c.set(Calendar.YEAR, year);
 			c.set(Calendar.MONTH, month);
 			c.set(Calendar.DAY_OF_MONTH, day);
-			if (date == startDate)
-				startDate = c.getTime();
-			else if (date == endDate)
-				endDate = c.getTime();
+			if (date == startDate) startDate = c.getTime();
+			else if (date == endDate) endDate = c.getTime();
 		}
 
 		private void setDate(Date date, int hour, int minute) {
@@ -604,10 +656,8 @@ public class TeacherMainFragment extends BaseFragment {
 			c.setTime(date);
 			c.set(Calendar.HOUR_OF_DAY, hour);
 			c.set(Calendar.MINUTE, minute);
-			if (date == startDate)
-				startDate = c.getTime();
-			else if (date == endDate)
-				endDate = c.getTime();
+			if (date == startDate) startDate = c.getTime();
+			else if (date == endDate) endDate = c.getTime();
 		}
 
 	}
@@ -619,7 +669,7 @@ public class TeacherMainFragment extends BaseFragment {
 		ArrayList<Integer> filesToDelte;
 		int depId, year, id;
 		boolean isEdit = false;
-		
+
 		public SendClassTask(int id, TClass cl, ArrayList<UploadFileHolder> files, ArrayList<Integer> filesToDelte, int depId, int year) {
 			this(cl, files, depId, year);
 			this.id = id;
@@ -644,34 +694,32 @@ public class TeacherMainFragment extends BaseFragment {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 			String url = "http://tswp.martinviszlai.com/" + (isEdit ? "edit_event" : "create_event") + ".php?token=" + Prefs.getString(TOKEN_TAG, context);
-			
-			String[] editIdParam = {"id", id+""};
-			if(!isEdit) editIdParam = null;
-			
-			String retID = CommHelper.getHttpPostResponse(url,
-					new String[][] { editIdParam, { "title", cl.getName() }, { "desc", cl.getDesc() }, { "place", cl.getRoom() },
-							{ "start_date", sdf.format(cl.getStart()) }, { "end_date", sdf.format(cl.getEnd()) }, { "department", depId + "" },
-							{ "year", year + "" } });
 
-			if(filesToDelte != null && !filesToDelte.isEmpty()) {
+			String[] editIdParam = { "id", id + "" };
+			if (!isEdit) editIdParam = null;
+
+			String retID = CommHelper.getHttpPostResponse(
+					url,
+					new String[][] { editIdParam, { "title", cl.getName() }, { "desc", cl.getDesc() }, { "place", cl.getRoom() }, { "start_date", sdf.format(cl.getStart()) },
+							{ "end_date", sdf.format(cl.getEnd()) }, { "department", depId + "" }, { "year", year + "" } });
+
+			if (filesToDelte != null && !filesToDelte.isEmpty()) {
 				String delteString = "";
-				for(int id: filesToDelte) {
-					delteString += id+";";
+				for (int id : filesToDelte) {
+					delteString += id + ";";
 				}
-				String delResponse = CommHelper.getHttpGetReponse("http://tswp.martinviszlai.com/delete_files.php?token=" + Prefs.getString(TOKEN_TAG, context)+"&",
-						new String[][] {{"file_id", delteString}} );
-				System.out.println("Delte: "+delResponse);
+				String delResponse = CommHelper.getHttpGetReponse("http://tswp.martinviszlai.com/delete_files.php?token=" + Prefs.getString(TOKEN_TAG, context) + "&", new String[][] { { "file_id",
+						delteString } });
+				System.out.println("Delte: " + delResponse);
 			}
-			
+
 			for (UploadFileHolder f : files) {
 				CommHelper.sendFile(f.path, context, String.valueOf(retID));
 			}
 
 			Log.w("", "token: " + Prefs.getString(TOKEN_TAG, context));
 
-			Log.e("",
-					"title: " + cl.getName() + "  place: " + cl.getRoom() + "  desc: " + cl.getDesc() + "  dep: " + depId + "  year: " + year + "time: "
-							+ sdf.format(cl.getStart()));
+			Log.e("", "title: " + cl.getName() + "  place: " + cl.getRoom() + "  desc: " + cl.getDesc() + "  dep: " + depId + "  year: " + year + "time: " + sdf.format(cl.getStart()));
 			Log.e("", "GET BACK: '" + retID + "'");
 
 			return null;
@@ -717,9 +765,116 @@ public class TeacherMainFragment extends BaseFragment {
 
 		@Override
 		public boolean equals(Object o) {
-			if (o == null)
-				return false;
+			if (o == null) return false;
 			return path.equals(((UploadFileHolder) o).getPath());
 		}
 	}
+
+	private class EventPreviewDialog extends DialogFragment {
+		private TextView title, desc, room, time, attachTitle, placeTitle;
+		private LinearLayout filesLayout, studentsLayout;
+		private ImageButton button;
+		private TClass thisClass;
+		private SimpleDateFormat sdf;
+
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+			sdf = new SimpleDateFormat("HH:mm dd.MMMM");
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			final View v = inflater.inflate(R.layout.event_teacher_preview, null);
+
+			Bundle b = getArguments();
+			thisClass = (TClass) b.getSerializable(TeacherMainFragment.CLASS_TAG);
+
+			title = (TextView) v.findViewById(R.id.event_preview_title);
+			desc = (TextView) v.findViewById(R.id.event_preview_desc);
+			room = (TextView) v.findViewById(R.id.event_preview_room);
+			time = (TextView) v.findViewById(R.id.event_preview_time);
+			attachTitle = (TextView) v.findViewById(R.id.event_preview_attach_title);
+			placeTitle = (TextView) v.findViewById(R.id.event_preview_place_title);
+			button = (ImageButton) v.findViewById(R.id.event_item_button);
+
+			button.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Bundle b = new Bundle();
+					b.putBoolean(IS_EDIT, true);
+					b.putSerializable(CLASS_TAG, thisClass);
+					EditorDialog dialog = new EditorDialog();
+					dialog.setArguments(b);
+					dialog.show(getFragmentManager(), "dialog");
+					EventPreviewDialog.this.dismiss();
+				}
+			});
+
+			title.setTypeface(tCondBold);
+			desc.setTypeface(tCond);
+			room.setTypeface(tCondBold);
+			time.setTypeface(tCond);
+			attachTitle.setTypeface(tCondLight);
+			placeTitle.setTypeface(tCondLight);
+
+			title.setText(thisClass.getName());
+			desc.setText(thisClass.getDesc());
+			room.setText(thisClass.getRoom());
+			time.setText(sdf.format(thisClass.getStart()) + " - " + sdf.format(thisClass.getEnd()));
+
+			filesLayout = (LinearLayout) v.findViewById(R.id.event_preview_files_layout);
+
+			if (thisClass.getFiles().size() == 0) {
+				filesLayout.setVisibility(View.GONE);
+			} else {
+				TextView filesLabel = (TextView) v.findViewById(R.id.event_preview_attach_title);
+				filesLabel.setText("Prílohy (" + thisClass.getFiles().size() + ")");
+				for (final EventFile file : thisClass.getFiles()) {
+					final View fv = inflater.inflate(R.layout.upload_item, null);
+					TextView text = (TextView) fv.findViewById(R.id.upload_item_text);
+					text.setTypeface(tCond);
+					ImageButton but = (ImageButton) fv.findViewById(R.id.upload_item_remove);
+					but.setImageResource(R.drawable.download);
+					but.setBackgroundResource(R.drawable.circle_blue_selector);
+					text.setText(file.name);
+					but.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// download file
+							CommHelper.downloadFile(context, thisClass.getName(), file.name, file.id);
+						}
+					});
+					filesLayout.addView(fv);
+				}
+			}
+			String eventId = String.valueOf(thisClass.getId());
+			new DownloadStudentsTask() {
+				protected void onPostExecute(Void result) {
+					studentsLayout = (LinearLayout) v.findViewById(R.id.event_preview_students_layout);
+
+					if (students.size() == 0) {
+						studentsLayout.setVisibility(View.GONE);
+					} else {
+						studentsLayout.setVisibility(View.VISIBLE);
+						TextView studentsLabel = (TextView) v.findViewById(R.id.event_preview_students);
+						studentsLabel.setText("Prihlásení študenti (" + students.size() + ")");
+						for (final String student : students) {
+							TextView studentTV = new TextView(context);
+							studentTV.setTypeface(tCond);
+							studentTV.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+							studentTV.setTextSize(18);
+							studentTV.setText(student);
+							studentsLayout.addView(studentTV);
+						}
+					}
+				}
+			}.execute(eventId);
+
+			return v;
+		}
+	}
+
 }

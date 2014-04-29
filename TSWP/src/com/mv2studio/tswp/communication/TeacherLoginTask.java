@@ -31,11 +31,11 @@ public class TeacherLoginTask extends AsyncTask<String, Void, Void>{
 	protected boolean error = false;
 	private Context context;
 	private String emailText, passText;
-	
+
 	public TeacherLoginTask(Context context) {
 		this.context = context;
 	}
-	
+
 	protected void onPreExecute() {
 		pd = new ProgressDialog(context);
 		pd.setTitle("Prihlásenie");
@@ -44,11 +44,11 @@ public class TeacherLoginTask extends AsyncTask<String, Void, Void>{
 		pd.setIndeterminate(true);
 		pd.show();
 	};
-	
+
 	@Override
 	protected Void doInBackground(String... a) {
 		ArrayList<NameValuePair> pairs = new ArrayList<NameValuePair>();
-		
+
 		if(a.length == 2) {
 			emailText = a[0];
 			passText = a[1];
@@ -56,7 +56,7 @@ public class TeacherLoginTask extends AsyncTask<String, Void, Void>{
 			emailText = Prefs.getString(TeacherMainFragment.USER_NAME_TAG, context);
 			passText = Prefs.getString(TeacherMainFragment.USER_PASS_TAG, context);
 		}
-		
+
 		pairs.add(new BasicNameValuePair("email", emailText));
 		pairs.add(new BasicNameValuePair("hp", CommonUtils.getHashedString(passText)));
 		try {
@@ -64,7 +64,7 @@ public class TeacherLoginTask extends AsyncTask<String, Void, Void>{
 			HttpPost httpPost = new HttpPost("http://tswp.martinviszlai.com/login.php");
 			httpPost.setEntity(new UrlEncodedFormEntity(pairs));
 			HttpResponse response = httpClient.execute(httpPost);
-			
+
 			String token = EntityUtils.toString(response.getEntity());
 			error = token.length() != 32;
 			if (error) return null;
@@ -77,10 +77,10 @@ public class TeacherLoginTask extends AsyncTask<String, Void, Void>{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
-	
+
 	protected void onPostExecute(Void result) {
 		pd.dismiss();
 		if(error) {
@@ -89,10 +89,10 @@ public class TeacherLoginTask extends AsyncTask<String, Void, Void>{
 		}
 		Prefs.storeBoolValue(MainActivity.P_LOGGED_KEY, true, context);
 		Prefs.storeBoolValue(MainActivity.P_TEACHER_KEY, true, context);
-		
+
 		// store email and pass on successful login
 		Prefs.storeString(TeacherMainFragment.USER_NAME_TAG, emailText, context);
 		Prefs.storeString(TeacherMainFragment.USER_PASS_TAG, passText, context);
-		
+
 	}
 }

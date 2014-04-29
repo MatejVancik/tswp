@@ -294,7 +294,7 @@ public class StudentEventFragment extends BaseFragment {
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 			setStyle(DialogFragment.STYLE_NO_TITLE, 0);
-			sdf = new SimpleDateFormat("HH:mm dd.MMMí");
+			sdf = new SimpleDateFormat("HH:mm dd.MMMM");
 		}
 		
 		@Override

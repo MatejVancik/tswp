@@ -21,20 +21,21 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.mv2studio.tswp.core.Prefs;
+import com.mv2studio.tswp.ui.MainActivity;
 import com.mv2studio.tswp.ui.TeacherMainFragment;
 import com.mv2studio.tswp.util.CommonUtils;
 
 public class TeacherRegistrationTask extends AsyncTask<String, Void, Void> {
 	ProgressDialog pd;
-	String email, pass, token;
+	String email, pass;
 	boolean error = false;
 	Context context;
-	
+
 	public TeacherRegistrationTask(Context context) {
 		this.context = context;
 	}
-	
-	
+
+
 	protected void onPreExecute() {
 		pd = new ProgressDialog(context);
 		pd.setTitle("Registrácia");
@@ -43,7 +44,7 @@ public class TeacherRegistrationTask extends AsyncTask<String, Void, Void> {
 		pd.setIndeterminate(true);
 		pd.show();
 	}
-	
+
 	@Override
 	protected Void doInBackground(String... a) {
 		ArrayList<NameValuePair> pairs = new ArrayList<NameValuePair>();
@@ -53,14 +54,14 @@ public class TeacherRegistrationTask extends AsyncTask<String, Void, Void> {
 		pairs.add(new BasicNameValuePair("hp", CommonUtils.getHashedString(a[3])));
 		email = a[2];
 		pass = a[3];
-		
+
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpPost httpPost = new HttpPost("http://tswp.martinviszlai.com/register.php");
 			httpPost.setEntity(new UrlEncodedFormEntity(pairs));
 			HttpResponse response = httpClient.execute(httpPost);
-			
-			token = EntityUtils.toString(response.getEntity());
+
+			String token = EntityUtils.toString(response.getEntity());
 			error = token.length() != 32;
 			Log.e("", "Your token: "+token);
 			Prefs.storeString(TeacherMainFragment.TOKEN_TAG, token, context);
@@ -73,19 +74,20 @@ public class TeacherRegistrationTask extends AsyncTask<String, Void, Void> {
 		}
 		return null;
 	}
-	
+
 	protected void onPostExecute(Void result) {
 		if(error) {
 			pd.dismiss();
-			if (token.equals("1")){
-				Toast.makeText(context, "Email už je registrovaný", Toast.LENGTH_SHORT).show();
-			}else{
 			Toast.makeText(context, "Pri registrácii nastala chyba", Toast.LENGTH_SHORT).show();
-			}
 			return;
 		}
 		pd.dismiss();
-		new TeacherLoginTask(context).execute(email, pass);
+		new TeacherLoginTask(context){
+			protected void onPostExecute(Void result) {
+				super.onPostExecute(result);
+				((MainActivity)context).replaceFragment(new TeacherMainFragment());
+			};
+		}.execute(email, pass);
 	}
-	
+
 }
