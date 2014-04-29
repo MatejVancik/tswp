@@ -771,7 +771,7 @@ public class TeacherMainFragment extends BaseFragment {
 	}
 
 	private class EventPreviewDialog extends DialogFragment {
-		private TextView title, desc, room, time, attachTitle, placeTitle;
+		private TextView title, desc, room, time, attachTitle, studentsTitle, placeTitle;
 		private LinearLayout filesLayout, studentsLayout;
 		private ImageButton button;
 		private TClass thisClass;
@@ -796,6 +796,7 @@ public class TeacherMainFragment extends BaseFragment {
 			room = (TextView) v.findViewById(R.id.event_preview_room);
 			time = (TextView) v.findViewById(R.id.event_preview_time);
 			attachTitle = (TextView) v.findViewById(R.id.event_preview_attach_title);
+			studentsTitle = (TextView) v.findViewById(R.id.event_preview_students);
 			placeTitle = (TextView) v.findViewById(R.id.event_preview_place_title);
 			button = (ImageButton) v.findViewById(R.id.event_item_button);
 
@@ -818,6 +819,7 @@ public class TeacherMainFragment extends BaseFragment {
 			room.setTypeface(tCondBold);
 			time.setTypeface(tCond);
 			attachTitle.setTypeface(tCondLight);
+			studentsTitle.setTypeface(tCondLight);
 			placeTitle.setTypeface(tCondLight);
 
 			title.setText(thisClass.getName());
@@ -830,8 +832,7 @@ public class TeacherMainFragment extends BaseFragment {
 			if (thisClass.getFiles().size() == 0) {
 				filesLayout.setVisibility(View.GONE);
 			} else {
-				TextView filesLabel = (TextView) v.findViewById(R.id.event_preview_attach_title);
-				filesLabel.setText("Prílohy (" + thisClass.getFiles().size() + ")");
+				attachTitle.setText("Prílohy (" + thisClass.getFiles().size() + ")");
 				for (final EventFile file : thisClass.getFiles()) {
 					final View fv = inflater.inflate(R.layout.upload_item, null);
 					TextView text = (TextView) fv.findViewById(R.id.upload_item_text);
@@ -859,8 +860,7 @@ public class TeacherMainFragment extends BaseFragment {
 						studentsLayout.setVisibility(View.GONE);
 					} else {
 						studentsLayout.setVisibility(View.VISIBLE);
-						TextView studentsLabel = (TextView) v.findViewById(R.id.event_preview_students);
-						studentsLabel.setText("Prihlásení študenti (" + students.size() + ")");
+						studentsTitle.setText("Prihlásení študenti (" + students.size() + ")");
 						for (final String student : students) {
 							TextView studentTV = new TextView(context);
 							studentTV.setTypeface(tCond);

@@ -51,7 +51,7 @@ public class WizardFragment extends BaseFragment {
 	private Spinner faculty, year, dep;
 	private EditText teacherEmail, studentEmail, pass, name, surname;
 	private LinearLayout mainLayout, studentLayout, teacherLayout;
-	private TextView welcomeText, studentTitle1, studentTitle2, teacherTitle1, teacherTitle2;
+	private TextView welcomeText, studentTitle1, studentTitle2, studentTitle3, teacherTitle1, teacherTitle2;
 	private Context context;
 	private boolean isTeacher, maisLogged;
 	private int step = 0;
@@ -82,10 +82,12 @@ public class WizardFragment extends BaseFragment {
 
 		studentTitle1 = (TextView) l.findViewById(R.id.wizard_fragment_student_layout_title);
 		studentTitle2 = (TextView) l.findViewById(R.id.wizard_fragment_student_layout_title2);
+		studentTitle3 = (TextView) l.findViewById(R.id.wizard_fragment_student_layout_title3);
 		teacherTitle1 = (TextView) l.findViewById(R.id.wizard_fragment_teacher_layout_title);
 		teacherTitle2 = (TextView) l.findViewById(R.id.wizard_fragment_teacher_layout_title2);
 		studentTitle1.setTypeface(tThin);
 		studentTitle2.setTypeface(tThin);
+		studentTitle3.setTypeface(tThin);
 		teacherTitle1.setTypeface(tThin);
 		teacherTitle2.setTypeface(tThin);
 		studentMais.setTypeface(tCondBold);
