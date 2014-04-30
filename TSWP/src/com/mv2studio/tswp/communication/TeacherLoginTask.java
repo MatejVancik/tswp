@@ -61,7 +61,7 @@ public class TeacherLoginTask extends AsyncTask<String, Void, Void>{
 		pairs.add(new BasicNameValuePair("hp", CommonUtils.getHashedString(passText)));
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpPost httpPost = new HttpPost("http://tswp.martinviszlai.com/login.php");
+			HttpPost httpPost = new HttpPost(URLs.login);
 			httpPost.setEntity(new UrlEncodedFormEntity(pairs));
 			HttpResponse response = httpClient.execute(httpPost);
 

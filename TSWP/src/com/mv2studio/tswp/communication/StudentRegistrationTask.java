@@ -54,7 +54,7 @@ public class StudentRegistrationTask extends AsyncTask<String, Void, Void> {
 
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpPost httpPost = new HttpPost("http://tswp.martinviszlai.com/register_student.php");
+			HttpPost httpPost = new HttpPost(URLs.registerStudent);
 			httpPost.setEntity(new UrlEncodedFormEntity(pairs));
 			HttpResponse response = httpClient.execute(httpPost);
 

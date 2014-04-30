@@ -138,7 +138,7 @@ public class StudentEventFragment extends BaseFragment {
 			Db db = new Db(context);
 			db.cleanEvents();
 			String json = CommHelper.getHttpPostResponse(
-					"http://tswp.martinviszlai.com/get_events.php", 
+					URLs.getEvents, 
 					new String[][]{{"department", Prefs.getIntValue(DEP_TAG, context)+""},{"year", Prefs.getString(YEAR_TAG, context)}}
 			);
 			if(json == null) {

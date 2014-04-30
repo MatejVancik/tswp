@@ -163,8 +163,8 @@ public class TeacherMainFragment extends BaseFragment {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			System.out.println("REQUEST FOR JSON TO: " + "http://tswp.martinviszlai.com/get_events.php?token=" + Prefs.getString(TOKEN_TAG, context));
-			String json = CommHelper.getHttpGetReponse("http://tswp.martinviszlai.com/get_events.php?token=" + Prefs.getString(TOKEN_TAG, context));
+			System.out.println("REQUEST FOR JSON TO: " + URLs.getEvents + "?token=" + Prefs.getString(TOKEN_TAG, context));
+			String json = CommHelper.getHttpGetReponse(URLs.getEvents + "?token=" + Prefs.getString(TOKEN_TAG, context));
 			if (json == null) {
 				cancel(true);
 				return null;
@@ -229,11 +229,11 @@ public class TeacherMainFragment extends BaseFragment {
 
 		@Override
 		protected Void doInBackground(String... params) {
-			System.out.println("REQUEST FOR JSON TO: " + URLs.get_subscriptions + "?token=" + Prefs.getString(TOKEN_TAG, context) + "\n with event_id: " + params[0]);
+			System.out.println("REQUEST FOR JSON TO: " + URLs.getSubscriptions + "?token=" + Prefs.getString(TOKEN_TAG, context) + "\n with event_id: " + params[0]);
 			ArrayList<NameValuePair> pairs = new ArrayList<NameValuePair>();
 			pairs.add(new BasicNameValuePair("event_id", params[0]));
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpPost httpPost = new HttpPost(URLs.get_subscriptions + "?token=" + Prefs.getString(TOKEN_TAG, context));
+			HttpPost httpPost = new HttpPost(URLs.getSubscriptions + "?token=" + Prefs.getString(TOKEN_TAG, context));
 			String json = null;
 			try {
 				httpPost.setEntity(new UrlEncodedFormEntity(pairs));
@@ -463,7 +463,7 @@ public class TeacherMainFragment extends BaseFragment {
 												@Override
 												public void run() {
 													System.out.println("Zmazane eventy: "
-															+ CommHelper.getHttpPostResponse("http://tswp.martinviszlai.com/delete_event.php?token=" + Prefs.getString(TOKEN_TAG, context),
+															+ CommHelper.getHttpPostResponse(URLs.deleteEvent + "?token=" + Prefs.getString(TOKEN_TAG, context),
 																	new String[][] { { "event_id", thisClass.getId() + "" } }));
 													EditorDialog.this.dismiss();
 												}
@@ -693,7 +693,7 @@ public class TeacherMainFragment extends BaseFragment {
 		protected Void doInBackground(Void... params) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-			String url = "http://tswp.martinviszlai.com/" + (isEdit ? "edit_event" : "create_event") + ".php?token=" + Prefs.getString(TOKEN_TAG, context);
+			String url = (isEdit ? URLs.editEvent : URLs.createEvent) + "?token=" + Prefs.getString(TOKEN_TAG, context);
 
 			String[] editIdParam = { "id", id + "" };
 			if (!isEdit) editIdParam = null;
@@ -708,7 +708,7 @@ public class TeacherMainFragment extends BaseFragment {
 				for (int id : filesToDelte) {
 					delteString += id + ";";
 				}
-				String delResponse = CommHelper.getHttpGetReponse("http://tswp.martinviszlai.com/delete_files.php?token=" + Prefs.getString(TOKEN_TAG, context) + "&", new String[][] { { "file_id",
+				String delResponse = CommHelper.getHttpGetReponse(URLs.deleteFiles+"?token=" + Prefs.getString(TOKEN_TAG, context) + "&", new String[][] { { "file_id",
 						delteString } });
 				System.out.println("Delte: " + delResponse);
 			}
