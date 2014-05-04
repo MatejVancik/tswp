@@ -20,7 +20,7 @@ public class Notification {
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
 											 .setContentTitle(contentTitle)
 											 .setContentText(contentText)
-											 .setSmallIcon(R.drawable.ic_launcher);
+											 .setSmallIcon(R.drawable.ic_notify);
 
 		if(Prefs.getBoolValue(Prefs.VIB_TAG, context)) {
 			builder.setVibrate(new long[] {1000});
