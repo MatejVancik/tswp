@@ -6,13 +6,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +42,6 @@ import com.mv2studio.tswp.core.Prefs;
 import com.mv2studio.tswp.model.Department;
 import com.mv2studio.tswp.model.Faculty;
 import com.mv2studio.tswp.ui.MainActivity.OnBackPressedListener;
-import com.mv2studio.tswp.util.CommonUtils;
 
 public class WizardFragment extends BaseFragment {
 
@@ -152,6 +151,21 @@ public class WizardFragment extends BaseFragment {
 
 				switch (v.getId()) {
 					case R.id.wizard_fragment_student_button:
+						AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+						View vv = getActivity().getLayoutInflater().inflate(R.layout.update_window, null);
+						((TextView)vv.findViewById(R.id.update_window_update_text)).setTypeface(tThin);
+						((TextView)vv.findViewById(R.id.update1)).setTypeface(tCond);
+						((TextView)vv.findViewById(R.id.update2)).setTypeface(tCond);
+						builder.setView(vv);
+						builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.dismiss();
+							}
+						});
+						builder.show();
+						
 						step++;
 						isTeacher = false;
 						switchView(mainLayout, studentLayout);

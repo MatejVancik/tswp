@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp" >
+
+        <TextView
+            android:id="@+id/update_window_update_text"
+            style="@style/PlayNowArtist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stiahnutie rozvrhu"
+            android:textSize="30sp" />
+        <View
+            android:layout_height="1px"
+            android:layout_width="match_parent"
+            android:background="@color/HoloBlue"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:layout_below="@+id/update_window_update_text" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView 
+                android:id="@+id/update1"
+                style="@style/HelpStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Prihláste sa na svojom počítači do portálu MAIS a exportuje rozvrh do iCal."/>
+            
+            
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/rozvrh" />
+            
+            <TextView
+                android:id="@+id/update2"
+                style="@style/HelpStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Uložte rozvrh do telefónu, dropboxu alebo gDrive a pokračujte tlačidlom VYBRAŤ ROZVRH" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

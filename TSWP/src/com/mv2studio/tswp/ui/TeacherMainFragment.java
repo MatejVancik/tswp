@@ -296,6 +296,7 @@ public class TeacherMainFragment extends BaseFragment {
 				holder.room = (TextView) convertView.findViewById(R.id.event_item_room);
 				holder.date = (TextView) convertView.findViewById(R.id.event_item_date);
 				holder.attach = (TextView) convertView.findViewById(R.id.event_item_files);
+				convertView.findViewById(R.id.event_item_button).setVisibility(View.GONE);
 				holder.attach.setTypeface(tCond);
 				holder.date.setTypeface(tCond);
 				holder.title.setTypeface(tCond);
