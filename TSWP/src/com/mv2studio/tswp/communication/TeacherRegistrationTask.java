@@ -14,12 +14,17 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mv2studio.mynsa.R;
 import com.mv2studio.tswp.core.Prefs;
 import com.mv2studio.tswp.ui.MainActivity;
 import com.mv2studio.tswp.ui.TeacherMainFragment;
@@ -28,7 +33,7 @@ import com.mv2studio.tswp.util.CommonUtils;
 public class TeacherRegistrationTask extends AsyncTask<String, Void, Void> {
 	ProgressDialog pd;
 	String email, pass;
-	boolean error = false;
+	public boolean error = false;
 	Context context;
 
 	public TeacherRegistrationTask(Context context) {
@@ -61,9 +66,10 @@ public class TeacherRegistrationTask extends AsyncTask<String, Void, Void> {
 			httpPost.setEntity(new UrlEncodedFormEntity(pairs));
 			HttpResponse response = httpClient.execute(httpPost);
 
-			String token = EntityUtils.toString(response.getEntity());
-			error = token.length() != 32;
-			Log.e("", "Your token: "+token);
+			String token = EntityUtils.toString(response.getEntity()).trim();
+			error = token.length() != 32 && !token.equals("OK");
+			
+			Log.e("", "Your token: "+token.length()+" token: "+token);
 			Prefs.storeString(TeacherMainFragment.TOKEN_TAG, token, context);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -82,12 +88,17 @@ public class TeacherRegistrationTask extends AsyncTask<String, Void, Void> {
 			return;
 		}
 		pd.dismiss();
-		new TeacherLoginTask(context){
-			protected void onPostExecute(Void result) {
-				super.onPostExecute(result);
-				((MainActivity)context).replaceFragment(new TeacherMainFragment());
-			};
-		}.execute(email, pass);
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setMessage("Registrácia úspešná. Prosím, potvrdte aktivačný mail.");
+		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		builder.show();
 	}
 
 }

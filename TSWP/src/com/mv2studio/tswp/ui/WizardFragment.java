@@ -20,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -221,7 +222,16 @@ public class WizardFragment extends BaseFragment {
 
 							// REGISTRATION
 						} else {
-							new TeacherRegistrationTask(getActivity()).execute(nameText, surNameText, emailText, passText);
+							new TeacherRegistrationTask(getActivity()) {
+								@Override
+								protected void onPostExecute(Void result) {
+									super.onPostExecute(result);
+									if(!error) {
+										name.setText("");
+										surname.setText("");
+									}
+								}
+							}.execute(nameText, surNameText, emailText, passText);
 						}
 						break;
 				}
